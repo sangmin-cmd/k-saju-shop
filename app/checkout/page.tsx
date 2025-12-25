@@ -105,7 +105,7 @@ export default function CheckoutPage() {
         customerPhone: formData.customerPhone,
         items: items,
         totalAmount: totalAmount,
-        paymentMethod: 'card', // 기본값
+        paymentMethod: 'card',
       });
 
       if (!orderResult.success) {
@@ -146,12 +146,8 @@ export default function CheckoutPage() {
         console.log('주문 확인 이메일 발송 완료');
       } catch (emailError) {
         console.error('주문 확인 이메일 발송 실패:', emailError);
-        // 이메일 실패해도 주문은 진행
       }
 
-      // 토스페이먼츠 결제 요청
-      // TODO: 실제 토스페이먼츠 API 연동
-      
       // 임시: 결제 성공으로 간주
       alert('결제가 완료되었습니다! (테스트 모드)\n\n이메일을 확인해주세요.');
 
@@ -172,61 +168,6 @@ export default function CheckoutPage() {
         console.log('결제 완료 이메일 발송 완료');
       } catch (emailError) {
         console.error('결제 완료 이메일 발송 실패:', emailError);
-        // 이메일 실패해도 주문은 진행
-      }
-      
-      // 장바구니 비우기
-      clearCart();
-      
-      // 주문 완료 페이지로 이동
-      router.push(`/order/complete?orderId=${orderId}`);
-      
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
-    }
-  };
-        totalAmount: totalAmount,
-      };
-
-      // 1. 주문 확인 이메일 발송
-      try {
-        await fetch('/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'order_confirmation',
-            to: formData.customerEmail,
-            data: emailData,
-          }),
-        });
-        console.log('주문 확인 이메일 발송 완료');
-      } catch (emailError) {
-        console.error('주문 확인 이메일 발송 실패:', emailError);
-        // 이메일 실패해도 주문은 진행
-      }
-
-      // 토스페이먼츠 결제 요청
-      // TODO: 실제 토스페이먼츠 API 연동
-      
-      // 임시: 결제 성공으로 간주
-      alert('결제가 완료되었습니다! (테스트 모드)\n\n이메일을 확인해주세요.');
-
-      // 2. 결제 완료 이메일 발송
-      try {
-        await fetch('/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'payment_success',
-            to: formData.customerEmail,
-            data: emailData,
-          }),
-        });
-        console.log('결제 완료 이메일 발송 완료');
-      } catch (emailError) {
-        console.error('결제 완료 이메일 발송 실패:', emailError);
-        // 이메일 실패해도 주문은 진행
       }
       
       // 장바구니 비우기
