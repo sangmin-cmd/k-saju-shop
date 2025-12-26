@@ -237,14 +237,6 @@ export default function CheckoutPage() {
             </div>
           )}
 
-          {/* 디버그 정보 (개발 중에만 표시) */}
-          <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-sm">
-            <strong>디버그 정보:</strong><br />
-            SDK Ready: {isSDKReady ? '✅' : '❌'}<br />
-            TossPayments: {typeof window !== 'undefined' && window.TossPayments ? '✅ 로드됨' : '❌ 없음'}<br />
-            Client Key: {clientKey.substring(0, 20)}...
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* 주문 상품 목록 */}
             <div className="lg:col-span-2 space-y-6">
