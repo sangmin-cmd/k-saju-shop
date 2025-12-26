@@ -2,740 +2,492 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import ProductCard from './components/ProductCard';
-import { products, popularProducts } from './lib/products';
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState(0);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+// 천간 데이터
+const STEMS = [
+  { hanja: '甲', name: '갑목', element: 'wood', yinyang: 'yang', 
+    title: '성장하는 큰 나무',
+    desc: '당신은 큰 나무처럼 곧고 당당한 에너지를 가졌습니다. 진취적이고 리더십이 강하며, 새로운 도전을 두려워하지 않습니다. 주변 사람들에게 든든한 버팀목이 되어주지만, 때로는 고집스러운 면도 있어요.',
+    keywords: ['리더십', '추진력', '성장'] },
+  { hanja: '乙', name: '을목', element: 'wood', yinyang: 'yin',
+    title: '유연한 덩굴',
+    desc: '당신은 풀과 덩굴처럼 유연하고 적응력이 뛰어납니다. 어떤 환경에서도 자신만의 방식으로 성장해나가는 힘이 있어요. 섬세한 감각과 예술적 재능이 돋보이며, 부드럽게 사람들의 마음을 얻습니다.',
+    keywords: ['유연함', '적응력', '섬세함'] },
+  { hanja: '丙', name: '병화', element: 'fire', yinyang: 'yang',
+    title: '빛나는 태양',
+    desc: '당신은 태양처럼 밝고 열정적인 에너지를 가졌습니다. 주변을 환하게 밝히는 카리스마가 있고, 어디서든 주목받는 존재예요. 낙천적이고 사교적이지만, 가끔은 성급하게 달려들기도 합니다.',
+    keywords: ['열정', '카리스마', '낙관'] },
+  { hanja: '丁', name: '정화', element: 'fire', yinyang: 'yin',
+    title: '따뜻한 촛불',
+    desc: '당신은 촛불처럼 은은하고 따뜻한 빛을 가졌습니다. 집중력이 뛰어나고 세심한 배려심으로 주변 사람들에게 위안을 줍니다. 내면의 열정을 조용히 태우며, 깊이 있는 관계를 만들어갑니다.',
+    keywords: ['집중력', '배려심', '깊이'] },
+  { hanja: '戊', name: '무토', element: 'earth', yinyang: 'yang',
+    title: '듬직한 산',
+    desc: '당신은 산처럼 묵직하고 신뢰감 있는 존재입니다. 흔들리지 않는 안정감으로 주변에 든든함을 주고, 포용력이 넓어 많은 사람들이 당신을 의지합니다. 다만 변화에는 시간이 조금 필요해요.',
+    keywords: ['안정감', '신뢰', '포용력'] },
+  { hanja: '己', name: '기토', element: 'earth', yinyang: 'yin',
+    title: '비옥한 땅',
+    desc: '당신은 논밭처럼 부드럽고 양육적인 에너지를 가졌습니다. 조화를 중시하고 실용적인 해결책을 찾아내며, 주변 사람들을 잘 돌봅니다. 중재자 역할을 잘 하지만, 때로는 걱정이 많기도 해요.',
+    keywords: ['중재력', '실용성', '양육'] },
+  { hanja: '庚', name: '경금', element: 'metal', yinyang: 'yang',
+    title: '강직한 바위',
+    desc: '당신은 바위와 쇠처럼 강직하고 결단력 있는 사람입니다. 정의감이 강하고 원칙을 중시하며, 한번 결정하면 밀고 나갑니다. 카리스마 있는 리더지만, 가끔은 냉정해 보일 수 있어요.',
+    keywords: ['결단력', '정의감', '원칙'] },
+  { hanja: '辛', name: '신금', element: 'metal', yinyang: 'yin',
+    title: '빛나는 보석',
+    desc: '당신은 보석처럼 세련되고 아름다운 감각을 가졌습니다. 완벽주의적 성향이 있고, 디테일에 강합니다. 예리한 심미안으로 본질을 꿰뚫지만, 스스로에게도 타인에게도 엄격한 편이에요.',
+    keywords: ['심미안', '완벽성', '세련됨'] },
+  { hanja: '壬', name: '임수', element: 'water', yinyang: 'yang',
+    title: '넓은 바다',
+    desc: '당신은 바다처럼 깊고 넓은 포용력을 가졌습니다. 지혜롭고 큰 그림을 볼 줄 알며, 변화에 유연하게 대처합니다. 다양한 가능성을 품고 있지만, 때로는 방향성이 흔들리기도 합니다.',
+    keywords: ['지혜', '포용력', '큰그림'] },
+  { hanja: '癸', name: '계수', element: 'water', yinyang: 'yin',
+    title: '맑은 이슬',
+    desc: '당신은 이슬처럼 순수하고 직관적인 감성을 가졌습니다. 깊이 있는 통찰력으로 보이지 않는 것을 느끼며, 영적인 감수성이 풍부합니다. 감정의 파도를 타면서도 본질을 놓치지 않아요.',
+    keywords: ['직관력', '감성', '깊이'] }
+];
 
-  const reportPreviews = [
-    {
-      title: '핵심 요약',
-      subtitle: '나의 성향·강점·주의 포인트 한 장 정리',
-      gradient: 'from-blue-500 to-purple-600',
-      content: {
-        type: 'ENFP × 甲木',
-        label: '성장하는 아이디어',
-        keywords: ['#도전', '#성장', '#에너자이저'],
-        insight: '끊임없이 새로운 도전을 멈추지 않는 에너자이저. 아이디어가 샘솟지만 마무리에 집중이 필요한 시기'
-      }
-    },
-    {
-      title: '오행/십성 밸런스',
-      subtitle: '부족한 기운 / 보완 전략',
-      gradient: 'from-emerald-500 to-teal-600',
-      content: {
-        elements: [
-          { name: '木', value: 4, color: 'bg-green-400' },
-          { name: '火', value: 2, color: 'bg-red-400' },
-          { name: '土', value: 3, color: 'bg-yellow-400' },
-          { name: '金', value: 1, color: 'bg-gray-300' },
-          { name: '水', value: 2, color: 'bg-blue-400' }
-        ],
-        recommendation: '金 에너지 보완 필요 → 규칙적인 루틴, 마무리 습관 강화'
-      }
-    },
-    {
-      title: '2026 액션 가이드',
-      subtitle: '시기별 추천 행동 & 리스크 관리',
-      gradient: 'from-pink-500 to-rose-600',
-      content: {
-        periods: [
-          { month: '1~3월', action: '준비/학습', risk: '성급한 시작' },
-          { month: '4~6월', action: '실행/도전', risk: '과욕' },
-          { month: '7~9월', action: '조정/보완', risk: '번아웃' }
-        ],
-        keyMessage: '상반기에 씨 뿌리고, 하반기에 거두는 흐름'
-      }
-    }
-  ];
+// 지지 데이터
+const BRANCHES = [
+  { hanja: '子', name: '자', element: 'water', animal: '쥐', time: '23:00-01:00' },
+  { hanja: '丑', name: '축', element: 'earth', animal: '소', time: '01:00-03:00' },
+  { hanja: '寅', name: '인', element: 'wood', animal: '호랑이', time: '03:00-05:00' },
+  { hanja: '卯', name: '묘', element: 'wood', animal: '토끼', time: '05:00-07:00' },
+  { hanja: '辰', name: '진', element: 'earth', animal: '용', time: '07:00-09:00' },
+  { hanja: '巳', name: '사', element: 'fire', animal: '뱀', time: '09:00-11:00' },
+  { hanja: '午', name: '오', element: 'fire', animal: '말', time: '11:00-13:00' },
+  { hanja: '未', name: '미', element: 'earth', animal: '양', time: '13:00-15:00' },
+  { hanja: '申', name: '신', element: 'metal', animal: '원숭이', time: '15:00-17:00' },
+  { hanja: '酉', name: '유', element: 'metal', animal: '닭', time: '17:00-19:00' },
+  { hanja: '戌', name: '술', element: 'earth', animal: '개', time: '19:00-21:00' },
+  { hanja: '亥', name: '해', element: 'water', animal: '돼지', time: '21:00-23:00' }
+];
 
-  const faqs = [
-    {
-      q: '생시를 몰라도 되나요?',
-      a: '네, 생시는 선택 입력입니다. 생시를 모르셔도 생년월일만으로 핵심 분석이 가능합니다. 생시가 있으면 더 정밀한 분석이 가능해집니다.'
-    },
-    {
-      q: 'AI 사주인가요?',
-      a: '아닙니다. K-Saju는 절기/만세력 기반의 정밀 계산 엔진입니다. 같은 입력이면 항상 같은 결과가 나오도록 설계되어 있습니다. 100% 자체 엔진 로직으로 해석됩니다.'
-    },
-    {
-      q: '결과가 매번 같은가요?',
-      a: '네, 동일한 입력(생년월일시, MBTI)이면 동일한 결과가 나옵니다. 이것이 AI 프롬프트 기반 서비스와의 가장 큰 차이점입니다.'
-    },
-    {
-      q: '리포트는 어떻게 받나요?',
-      a: '결제 완료 후 즉시 PDF가 생성되며, 마이페이지에서 언제든 다운로드할 수 있습니다. 이메일로도 발송해 드립니다.'
-    },
-    {
-      q: '환불은 어떻게 되나요?',
-      a: '리포트 생성 전 취소 시 전액 환불됩니다. 생성 후에는 디지털 상품 특성상 환불이 어려우나, 품질 불만족 시 고객센터로 문의해 주세요.'
-    }
-  ];
+// 오행 정보
+const ELEMENTS: {[key: string]: {name: string, color: string, bgColor: string}} = {
+  wood:  { name: '木', color: '#22c55e', bgColor: 'bg-green-500' },
+  fire:  { name: '火', color: '#ef4444', bgColor: 'bg-red-500' },
+  earth: { name: '土', color: '#eab308', bgColor: 'bg-yellow-500' },
+  metal: { name: '金', color: '#94a3b8', bgColor: 'bg-gray-400' },
+  water: { name: '水', color: '#3b82f6', bgColor: 'bg-blue-500' }
+};
 
-  const reviews = [
-    { text: '"설명이 뻔하지 않고 행동 가이드가 있어서 좋았어요."', author: '30대, 직장인', rating: 5 },
-    { text: '"결과가 재현돼서 신뢰가 생겼습니다."', author: '40대, 자영업', rating: 5 },
-    { text: '"오행 밸런스 보고 생활 루틴을 바꿨더니 컨디션이 달라졌어요."', author: '20대, 대학원생', rating: 5 },
-    { text: '"연애 패턴이 정확히 맞아서 소름…"', author: '30대, 프리랜서', rating: 5 },
-    { text: '"PDF로 정리돼서 상담 자료처럼 쓰기 좋아요."', author: '40대, 컨설턴트', rating: 5 },
-    { text: '"MBTI랑 같이 보니까 납득이 됩니다."', author: '20대, 직장인', rating: 5 }
-  ];
+// MBTI 타입별 특성
+const MBTI_TYPES: {[key: string]: {title: string, element: string}} = {
+  'INTJ': { title: '전략가', element: 'water' },
+  'INTP': { title: '논리술사', element: 'water' },
+  'ENTJ': { title: '통솔자', element: 'metal' },
+  'ENTP': { title: '변론가', element: 'fire' },
+  'INFJ': { title: '옹호자', element: 'water' },
+  'INFP': { title: '중재자', element: 'wood' },
+  'ENFJ': { title: '선도자', element: 'fire' },
+  'ENFP': { title: '활동가', element: 'fire' },
+  'ISTJ': { title: '현실주의자', element: 'earth' },
+  'ISFJ': { title: '수호자', element: 'earth' },
+  'ESTJ': { title: '경영자', element: 'metal' },
+  'ESFJ': { title: '집정관', element: 'earth' },
+  'ISTP': { title: '장인', element: 'metal' },
+  'ISFP': { title: '모험가', element: 'wood' },
+  'ESTP': { title: '사업가', element: 'metal' },
+  'ESFP': { title: '연예인', element: 'fire' }
+};
 
-  return (
-    <div className="bg-white">
-      {/* ========== 1. HERO ========== */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, #0a1628 0%, #1e3a5f 30%, #0d7377 70%, #14b8a6 100%)'
-        }}>
-        
-        {/* 배경 효과 */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        </div>
+// 사주 계산 함수
+function calculateSaju(year: number, month: number, day: number, hour: number) {
+  // 간단한 사주 계산 (실제로는 만세력 기반이 필요)
+  const yearStem = (year - 4) % 10;
+  const yearBranch = (year - 4) % 12;
+  
+  // 월주 계산 (간략화)
+  const monthBranch = (month + 1) % 12;
+  const monthStem = ((yearStem % 5) * 2 + month) % 10;
+  
+  // 일주 계산 (간략화 - 실제로는 만세력 필요)
+  const baseDate = new Date(1900, 0, 1);
+  const targetDate = new Date(year, month - 1, day);
+  const diffDays = Math.floor((targetDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
+  const dayStem = (diffDays + 10) % 10;
+  const dayBranch = (diffDays + 10) % 12;
+  
+  // 시주 계산
+  const hourBranch = Math.floor((hour + 1) / 2) % 12;
+  const hourStem = ((dayStem % 5) * 2 + hourBranch) % 10;
+  
+  return {
+    year: { stem: yearStem, branch: yearBranch },
+    month: { stem: monthStem, branch: monthBranch },
+    day: { stem: dayStem, branch: dayBranch },
+    hour: { stem: hourStem, branch: hourBranch }
+  };
+}
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center py-20">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-8 border border-white/20">
-            <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
-            <span className="text-white/90 text-sm font-medium">정밀 계산 + MBTI 교차 분석</span>
-          </div>
-          
-          {/* H1 */}
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            나를 이해하고,<br />타이밍까지 읽는 분석.
-          </h1>
-          
-          {/* Sub */}
-          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-            K-Saju 정밀 계산 엔진 + MBTI 교차 검증으로,<br className="hidden md:block" />
-            감이 아니라 <span className="text-cyan-300 font-semibold">구조</span>로 해석합니다.
-          </p>
+// 오행 분포 계산
+function calculateElements(saju: any) {
+  const elements: {[key: string]: number} = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  
+  [saju.year, saju.month, saju.day, saju.hour].forEach(pillar => {
+    elements[STEMS[pillar.stem].element]++;
+    elements[BRANCHES[pillar.branch].element]++;
+  });
+  
+  return elements;
+}
 
-          {/* 핵심 3줄 */}
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <span className="text-white/90 text-sm">🎯 성향 — 어떻게 선택하는지</span>
+// 케미 점수 계산
+function calculateChemistry(sajuElement: string, mbtiElement: string) {
+  const relations: {[key: string]: {[key: string]: number}} = {
+    wood:  { wood: 70, fire: 90, earth: 60, metal: 40, water: 85 },
+    fire:  { wood: 85, fire: 70, earth: 90, metal: 50, water: 45 },
+    earth: { wood: 55, fire: 85, earth: 70, metal: 90, water: 60 },
+    metal: { wood: 45, fire: 55, earth: 85, metal: 70, water: 90 },
+    water: { wood: 90, fire: 50, earth: 55, metal: 85, water: 70 }
+  };
+  
+  const base = relations[sajuElement]?.[mbtiElement] || 65;
+  const variance = Math.floor(Math.random() * 10) - 5;
+  return Math.min(99, Math.max(50, base + variance));
+}
+
+export default function FreePage() {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: '',
+    birthYear: '',
+    birthMonth: '',
+    birthDay: '',
+    birthHour: '',
+    gender: '',
+    mbti: ''
+  });
+  const [result, setResult] = useState<any>(null);
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const validate = () => {
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) newErrors.name = '이름을 입력해주세요';
+    if (!formData.birthYear) newErrors.birthYear = '년도를 선택해주세요';
+    if (!formData.birthMonth) newErrors.birthMonth = '월을 선택해주세요';
+    if (!formData.birthDay) newErrors.birthDay = '일을 선택해주세요';
+    if (!formData.gender) newErrors.gender = '성별을 선택해주세요';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleAnalyze = () => {
+    if (!validate()) return;
+
+    const year = parseInt(formData.birthYear);
+    const month = parseInt(formData.birthMonth);
+    const day = parseInt(formData.birthDay);
+    const hour = formData.birthHour ? parseInt(formData.birthHour) : 12;
+    
+    const saju = calculateSaju(year, month, day, hour);
+    const elements = calculateElements(saju);
+    const dayStem = STEMS[saju.day.stem];
+    
+    const mbtiInfo = formData.mbti ? MBTI_TYPES[formData.mbti] : null;
+    const chemistry = mbtiInfo ? calculateChemistry(dayStem.element, mbtiInfo.element) : null;
+
+    setResult({
+      saju,
+      dayStem,
+      elements,
+      mbti: formData.mbti,
+      mbtiInfo,
+      chemistry
+    });
+    setStep(2);
+  };
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const hours = Array.from({ length: 24 }, (_, i) => i);
+
+  if (step === 2 && result) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-8 px-4">
+        <div className="max-w-lg mx-auto">
+          {/* 헤더 */}
+          <div className="text-center mb-8">
+            <div className="inline-block px-3 py-1 bg-yellow-500/20 rounded-full text-yellow-400 text-xs font-medium mb-4">
+              ✨ 무료 분석 결과
             </div>
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <span className="text-white/90 text-sm">🌊 흐름 — 언제 밀고/쉬어야 하는지</span>
-            </div>
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <span className="text-white/90 text-sm">⚡ 액션 — 지금 해야 할 것/피해야 할 것</span>
-            </div>
-          </div>
-
-          {/* CTA 버튼 */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-            <Link 
-              href="/free" 
-              className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
-            >
-              무료 체험하기
-            </Link>
-            <Link 
-              href="/products" 
-              className="px-8 py-4 bg-cyan-500 text-white text-lg font-semibold rounded-xl hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
-            >
-              프리미엄 분석 →
-            </Link>
-          </div>
-
-          {/* 신뢰 배지 */}
-          <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-yellow-400">★</span>
-              <span>평균 4.9점</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>📊</span>
-              <span>1,000+ 분석 완료</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>✓</span>
-              <span>만족 보장 · 환불 정책</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 하단 그라디언트 */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
-      </section>
-
-      {/* ========== 2. 결과물 미리보기 ========== */}
-      <section className="bg-white py-24 px-4" id="preview">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
-              리포트 미리보기
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              이런 리포트를 받게 됩니다
-            </h2>
-            <p className="text-lg text-gray-600">
-              공유하고 싶어지는 한 장 요약 + 실행 가이드까지.
+            <h1 className="text-2xl font-bold text-white mb-2">
+              {formData.name}님의 사주 프로필
+            </h1>
+            <p className="text-gray-400 text-sm">
+              {formData.birthYear}.{formData.birthMonth}.{formData.birthDay}
+              {result.mbti && ` · ${result.mbti}`}
             </p>
           </div>
 
-          {/* 탭 */}
-          <div className="flex justify-center gap-2 mb-8">
-            {reportPreviews.map((preview, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveTab(idx)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  activeTab === idx
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+          {/* 케미 점수 (MBTI 입력시) */}
+          {result.chemistry && (
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-6 mb-6 text-white">
+              <div className="text-center">
+                <div className="text-sm opacity-80 mb-2">MBTI × 사주 케미</div>
+                <div className="text-5xl font-bold mb-2">{result.chemistry}<span className="text-2xl">점</span></div>
+                <div className="text-lg font-medium">
+                  {result.chemistry >= 80 ? '🔥 환상의 조합!' : 
+                   result.chemistry >= 65 ? '✨ 좋은 시너지' : '💪 보완하며 성장'}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 일간 카드 - 핵심 */}
+          <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-6">
+            <div className="text-xs text-yellow-400 tracking-wider mb-3">🌟 당신의 일간</div>
+            <div className="flex items-center gap-4 mb-4">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center text-3xl font-bold text-white"
+                style={{ backgroundColor: ELEMENTS[result.dayStem.element].color }}
               >
-                {preview.title}
-              </button>
-            ))}
-          </div>
-
-          {/* 미리보기 카드 */}
-          <div className={`bg-gradient-to-br ${reportPreviews[activeTab].gradient} rounded-3xl p-8 text-white max-w-2xl mx-auto shadow-2xl`}>
-            <div className="text-sm opacity-80 mb-2">{reportPreviews[activeTab].title}</div>
-            <div className="text-lg font-medium mb-6">{reportPreviews[activeTab].subtitle}</div>
-            
-            {activeTab === 0 && (
-              <div className="space-y-4">
-                <div className="text-3xl font-bold">{reportPreviews[0].content.type}</div>
-                <div className="text-lg opacity-90">{reportPreviews[0].content.label}</div>
-                <div className="flex gap-2 flex-wrap">
-                  {reportPreviews[0].content.keywords.map((kw, i) => (
-                    <span key={i} className="px-3 py-1 bg-white/20 rounded-full text-sm">{kw}</span>
-                  ))}
-                </div>
-                <div className="mt-4 p-4 bg-white/20 rounded-xl">
-                  <div className="text-sm opacity-70 mb-1">핵심 인사이트</div>
-                  <div className="font-medium">{reportPreviews[0].content.insight}</div>
-                </div>
+                {result.dayStem.hanja}
               </div>
-            )}
-
-            {activeTab === 1 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  {reportPreviews[1].content.elements.map((el, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <span className="w-8 text-sm">{el.name}</span>
-                      <div className="flex-1 h-4 bg-white/20 rounded-full overflow-hidden">
-                        <div className={`h-full ${el.color}`} style={{ width: `${el.value * 20}%` }}></div>
-                      </div>
-                      <span className="text-sm">{el.value}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 p-4 bg-white/20 rounded-xl">
-                  <div className="text-sm opacity-70 mb-1">보완 전략</div>
-                  <div className="font-medium">{reportPreviews[1].content.recommendation}</div>
-                </div>
+              <div>
+                <div className="text-xl font-bold text-white">{result.dayStem.title}</div>
+                <div className="text-sm text-gray-400">{result.dayStem.name} · {result.dayStem.yinyang === 'yang' ? '양' : '음'}의 기운</div>
               </div>
-            )}
-
-            {activeTab === 2 && (
-              <div className="space-y-4">
-                <div className="space-y-3">
-                  {reportPreviews[2].content.periods.map((p, i) => (
-                    <div key={i} className="flex items-center gap-4 p-3 bg-white/10 rounded-lg">
-                      <span className="font-bold text-lg">{p.month}</span>
-                      <div className="flex-1">
-                        <div className="text-sm">✓ {p.action}</div>
-                        <div className="text-sm opacity-70">⚠ {p.risk} 주의</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 p-4 bg-white/20 rounded-xl">
-                  <div className="text-sm opacity-70 mb-1">2026 핵심 메시지</div>
-                  <div className="font-medium">{reportPreviews[2].content.keyMessage}</div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="text-center mt-8">
-            <Link 
-              href="/free" 
-              className="inline-block px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              무료로 체험해보기 →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 3. HOW IT WORKS ========== */}
-      <section className="bg-gray-50 py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              3분이면 끝. 결과는 바로 받습니다.
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
-              <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">✏️</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">입력</h3>
-              <p className="text-gray-600 mb-2">생년월일 · 시간(선택) + MBTI(선택)</p>
-              <p className="text-sm text-gray-400">💡 생시를 몰라도 분석 가능합니다.</p>
             </div>
-
-            {/* Step 2 */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
-              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">⚙️</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">정밀 계산</h3>
-              <p className="text-gray-600 mb-2">절기/만세력 기반 계산 + 패턴 매칭</p>
-              <p className="text-sm text-gray-400">💡 MBTI 교차 검증으로 정확도 향상</p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
-              <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">📄</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">리포트 제공</h3>
-              <p className="text-gray-600 mb-2">요약 + 상세 + 실행 가이드</p>
-              <p className="text-sm text-gray-400">💡 PDF 다운로드 / 웹에서 바로 확인</p>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <Link 
-              href="/products" 
-              className="inline-block px-8 py-4 bg-cyan-500 text-white text-lg font-semibold rounded-xl hover:bg-cyan-600 transition-colors"
-            >
-              지금 내 리포트 만들기 →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 4. 상품 패키지 ========== */}
-      <section className="bg-white py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              당신에게 맞는 분석을 선택하세요
-            </h2>
-            <p className="text-gray-600">
-              결제 후 즉시 생성 / PDF 제공 / 마이페이지 저장
+            <p className="text-gray-300 leading-relaxed text-sm">
+              {result.dayStem.desc}
             </p>
-          </div>
-
-          {/* 상품 카드 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} compact />
-            ))}
-          </div>
-
-          {/* 비교표 */}
-          <div className="bg-gray-50 rounded-2xl p-8">
-            <h3 className="text-xl font-bold text-center mb-8">패키지 비교</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left py-4 px-4">기능</th>
-                    <th className="text-center py-4 px-4">기본</th>
-                    <th className="text-center py-4 px-4 bg-cyan-50">프리미엄</th>
-                    <th className="text-center py-4 px-4">궁합 기본</th>
-                    <th className="text-center py-4 px-4">궁합 완전판</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">핵심 성향 분석</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">오행/십성 밸런스</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">MBTI × 사주 교차 분석</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">연애/궁합 분석</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">2026 액션 가이드</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 px-4 font-semibold">PDF 분량</td>
-                    <td className="text-center py-3 px-4">15p</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50 font-semibold">30p</td>
-                    <td className="text-center py-3 px-4">7p</td>
-                    <td className="text-center py-3 px-4">19p</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 5. WHY K-SAJU ========== */}
-      <section className="bg-gray-900 py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm font-medium mb-4">
-              차별화 포인트
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              왜 K-Saju Engine인가?
-            </h2>
-            <p className="text-lg text-gray-400">
-              프롬프트가 아니라, <span className="text-cyan-400">계산 엔진</span>입니다.<br />
-              같은 입력이면 같은 결과가 나옵니다.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* 일반 AI 사주 */}
-            <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🤖</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-400">일반 AI 사주</h3>
-                  <p className="text-sm text-gray-500">GPT 기반 프롬프트</p>
-                </div>
-              </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>매번 결과가 달라질 수 있음</span>
-                </li>
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>만세력/절기 계산 오류 가능</span>
-                </li>
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>근거 설명이 약함</span>
-                </li>
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>검증/재현이 어려움</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* K-Saju Engine */}
-            <div className="bg-gradient-to-br from-cyan-900/50 to-blue-900/50 rounded-2xl p-8 border-2 border-cyan-500 relative">
-              <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-cyan-500 text-white text-xs font-bold rounded-full">추천</span>
-              </div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">⚡</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">K-Saju Engine</h3>
-                  <p className="text-sm text-cyan-400">정밀 계산 시스템</p>
-                </div>
-              </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>동일 입력 = 동일 결과 (일관성)</span>
-                </li>
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>절기 기반 정밀 만세력 계산</span>
-                </li>
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>패턴 매칭으로 구조화된 해석</span>
-                </li>
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>MBTI 교차 검증으로 정확도 향상</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 6. 유즈케이스 ========== */}
-      <section className="bg-white py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              이럴 때 가장 쓸모 있습니다
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* 연애/관계 */}
-            <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 border border-pink-100">
-              <div className="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">💕</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">연애 · 관계</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span>갈등이 반복되는 이유</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span>상대와 맞추는 포인트</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span>피해야 할 대화 패턴</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* 커리어 */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
-              <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">💼</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">커리어 · 의사결정</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500">•</span>
-                  <span>내 강점이 먹히는 환경</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500">•</span>
-                  <span>이직/도전 타이밍</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500">•</span>
-                  <span>번아웃 위험 신호</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* 돈/사업 */}
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-100">
-              <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">💰</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">돈 · 사업</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500">•</span>
-                  <span>리스크가 커지는 시기</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500">•</span>
-                  <span>확장/정리 타이밍</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500">•</span>
-                  <span>현금흐름 관리 포인트</span>
-                </li>
-              </ul>
+            <div className="flex gap-2 mt-4">
+              {result.dayStem.keywords.map((kw: string, i: number) => (
+                <span key={i} className="px-3 py-1 bg-gray-700 rounded-full text-xs text-gray-300">
+                  #{kw}
+                </span>
+              ))}
             </div>
           </div>
 
-          <div className="text-center mt-12">
-            <Link 
-              href="/products" 
-              className="inline-block px-8 py-4 bg-gray-900 text-white text-lg font-semibold rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              내 케이스로 바로 분석하기 →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 7. 후기 ========== */}
-      <section className="bg-gray-50 py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              먼저 써본 사람들이 말합니다
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {reviews.map((review, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-6 shadow-lg">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <span key={i} className="text-yellow-400">★</span>
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-4 leading-relaxed">{review.text}</p>
-                <p className="text-sm text-gray-500">{review.author}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 8. 신뢰 블록 ========== */}
-      <section className="bg-white py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              신뢰가 먼저입니다
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 bg-gray-50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">🔒</span>
-              </div>
-              <h3 className="text-lg font-bold mb-3">개인정보 보호</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                입력 데이터는 최소 수집<br />
-                언제든 삭제 가능<br />
-                분석 목적 외 사용 없음
-              </p>
-            </div>
-
-            <div className="text-center p-8 bg-gray-50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">💳</span>
-              </div>
-              <h3 className="text-lg font-bold mb-3">안전 결제 · 환불</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                결제는 PG사 안전결제<br />
-                환불 기준 명확히 공개<br />
-                만족 보장 정책
-              </p>
-            </div>
-
-            <div className="text-center p-8 bg-gray-50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">📊</span>
-              </div>
-              <h3 className="text-lg font-bold mb-3">계산 근거</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                절기 · 만세력 계산 로직 기반<br />
-                20년+ 전문가 감수<br />
-                100% 자체 엔진 로직 해석
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 9. FAQ ========== */}
-      <section className="bg-gray-50 py-24 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              자주 묻는 질문
-            </h2>
-          </div>
-
-          <div className="space-y-4">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900">{faq.q}</span>
-                  <span className={`text-2xl transition-transform ${openFaq === idx ? 'rotate-45' : ''}`}>+</span>
-                </button>
-                {openFaq === idx && (
-                  <div className="px-6 pb-5 text-gray-600 leading-relaxed">
-                    {faq.a}
+          {/* 오행 분포 */}
+          <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-6">
+            <div className="text-xs text-yellow-400 tracking-wider mb-4">⚡ 오행 에너지 분포</div>
+            <div className="space-y-3">
+              {Object.entries(result.elements).map(([el, count]) => (
+                <div key={el} className="flex items-center gap-3">
+                  <span className="w-8 text-center font-bold" style={{ color: ELEMENTS[el].color }}>
+                    {ELEMENTS[el].name}
+                  </span>
+                  <div className="flex-1 bg-gray-700 rounded-full h-4 overflow-hidden">
+                    <div 
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ 
+                        width: `${((count as number) / 8) * 100}%`,
+                        backgroundColor: ELEMENTS[el].color 
+                      }}
+                    />
                   </div>
-                )}
+                  <span className="w-6 text-right text-gray-400 text-sm">{count as number}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 블러 처리된 프리미엄 미리보기 */}
+          <div className="relative bg-gray-800 border border-gray-700 rounded-2xl p-6 mb-6 overflow-hidden">
+            <div className="blur-sm opacity-50">
+              <div className="text-xs text-yellow-400 tracking-wider mb-3">📖 2026년 운세 미리보기</div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-700 rounded w-full"></div>
+                <div className="h-4 bg-gray-700 rounded w-4/5"></div>
+                <div className="h-4 bg-gray-700 rounded w-3/4"></div>
               </div>
-            ))}
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="bg-gray-700 rounded-lg p-3 text-center">
+                  <div className="text-lg">💼</div>
+                  <div className="text-xs text-gray-400">직장운</div>
+                </div>
+                <div className="bg-gray-700 rounded-lg p-3 text-center">
+                  <div className="text-lg">💰</div>
+                  <div className="text-xs text-gray-400">재물운</div>
+                </div>
+                <div className="bg-gray-700 rounded-lg p-3 text-center">
+                  <div className="text-lg">💕</div>
+                  <div className="text-xs text-gray-400">연애운</div>
+                </div>
+              </div>
+            </div>
+            {/* 오버레이 */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent flex items-end justify-center pb-6">
+              <div className="text-center">
+                <div className="text-white font-medium mb-1">🔒 프리미엄 분석</div>
+                <div className="text-gray-400 text-sm">전체 운세, 월별 가이드, 행운 정보</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* ========== 10. FINAL CTA ========== */}
-      <section className="bg-gradient-to-r from-cyan-600 to-blue-600 py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            지금, 내 리포트를 받아보세요.
-          </h2>
-          <p className="text-xl text-white/80 mb-8">
-            무료 1페이지로 먼저 확인하고, 필요하면 전체 리포트로 확장하세요.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* CTA */}
+          <div className="space-y-3">
             <Link 
-              href="/free" 
-              className="px-8 py-4 bg-white text-cyan-600 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg"
+              href="/products"
+              className="block w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 text-center font-bold rounded-xl hover:opacity-90 transition-all"
             >
-              무료 체험하기
+              전체 분석 리포트 보기 →
             </Link>
-            <Link 
-              href="/products" 
-              className="px-8 py-4 bg-cyan-700 text-white text-lg font-bold rounded-xl hover:bg-cyan-800 transition-all border-2 border-white/30"
+            <button
+              onClick={() => { setStep(1); setResult(null); }}
+              className="block w-full py-3 bg-gray-800 text-gray-300 text-center rounded-xl hover:bg-gray-700 transition-all"
             >
-              프리미엄 분석 →
-            </Link>
+              다시 분석하기
+            </button>
           </div>
-        </div>
-      </section>
 
-      {/* ========== STICKY CTA BAR ========== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 px-4 z-50 shadow-lg">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <span className="text-sm text-gray-600 hidden sm:block">
-            무료로 먼저 체험해 보세요
-          </span>
-          <div className="flex gap-3 w-full sm:w-auto">
-            <Link 
-              href="/free" 
-              className="flex-1 sm:flex-none px-6 py-3 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
-            >
-              무료 체험
-            </Link>
-            <Link 
-              href="/products" 
-              className="flex-1 sm:flex-none px-6 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors text-center"
-            >
-              프리미엄
-            </Link>
+          {/* 푸터 */}
+          <div className="text-center mt-8 text-gray-500 text-xs">
+            <p>© K-Saju by 인사이트 금융경영연구소</p>
+            <p className="mt-1">정밀 만세력 기반 · AI 아님</p>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Sticky Bar 공간 확보 */}
-      <div className="h-20"></div>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-12 px-4">
+      <div className="max-w-md mx-auto">
+        {/* 헤더 */}
+        <div className="text-center mb-8">
+          <div className="inline-block px-3 py-1 bg-yellow-500/20 rounded-full text-yellow-400 text-xs font-medium mb-4">
+            🎁 무료 체험
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-3">
+            나의 <span className="text-yellow-400">사주 × MBTI</span> 알아보기
+          </h1>
+          <p className="text-gray-400">
+            생년월일만으로 나의 타고난 기질을 확인하세요
+          </p>
+        </div>
+
+        {/* 입력 폼 */}
+        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6">
+          {/* 이름 */}
+          <div className="mb-5">
+            <label className="block text-sm text-gray-400 mb-2">이름</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="이름을 입력하세요"
+              className={`w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 ${errors.name ? 'border-red-500' : 'border-gray-700'}`}
+            />
+            {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+          </div>
+
+          {/* 생년월일 */}
+          <div className="mb-5">
+            <label className="block text-sm text-gray-400 mb-2">생년월일</label>
+            <div className="grid grid-cols-3 gap-2">
+              <select
+                value={formData.birthYear}
+                onChange={(e) => setFormData({ ...formData, birthYear: e.target.value })}
+                className={`px-3 py-3 bg-gray-900 border rounded-xl text-white focus:outline-none focus:border-yellow-500 ${errors.birthYear ? 'border-red-500' : 'border-gray-700'}`}
+              >
+                <option value="">년</option>
+                {years.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+              <select
+                value={formData.birthMonth}
+                onChange={(e) => setFormData({ ...formData, birthMonth: e.target.value })}
+                className={`px-3 py-3 bg-gray-900 border rounded-xl text-white focus:outline-none focus:border-yellow-500 ${errors.birthMonth ? 'border-red-500' : 'border-gray-700'}`}
+              >
+                <option value="">월</option>
+                {months.map(m => <option key={m} value={m}>{m}월</option>)}
+              </select>
+              <select
+                value={formData.birthDay}
+                onChange={(e) => setFormData({ ...formData, birthDay: e.target.value })}
+                className={`px-3 py-3 bg-gray-900 border rounded-xl text-white focus:outline-none focus:border-yellow-500 ${errors.birthDay ? 'border-red-500' : 'border-gray-700'}`}
+              >
+                <option value="">일</option>
+                {days.map(d => <option key={d} value={d}>{d}일</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* 생시 (선택) */}
+          <div className="mb-5">
+            <label className="block text-sm text-gray-400 mb-2">
+              생시 <span className="text-gray-500">(선택)</span>
+            </label>
+            <select
+              value={formData.birthHour}
+              onChange={(e) => setFormData({ ...formData, birthHour: e.target.value })}
+              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-yellow-500"
+            >
+              <option value="">모름 / 선택 안함</option>
+              {hours.map(h => <option key={h} value={h}>{h}시</option>)}
+            </select>
+          </div>
+
+          {/* 성별 */}
+          <div className="mb-5">
+            <label className="block text-sm text-gray-400 mb-2">성별</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, gender: 'male' })}
+                className={`py-3 rounded-xl font-medium transition-all ${
+                  formData.gender === 'male'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-gray-500'
+                }`}
+              >
+                👨 남성
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, gender: 'female' })}
+                className={`py-3 rounded-xl font-medium transition-all ${
+                  formData.gender === 'female'
+                    ? 'bg-pink-600 text-white'
+                    : 'bg-gray-900 border border-gray-700 text-gray-400 hover:border-gray-500'
+                }`}
+              >
+                👩 여성
+              </button>
+            </div>
+            {errors.gender && <p className="text-red-400 text-xs mt-1">{errors.gender}</p>}
+          </div>
+
+          {/* MBTI (선택) */}
+          <div className="mb-6">
+            <label className="block text-sm text-gray-400 mb-2">
+              MBTI <span className="text-yellow-400">(입력시 케미 분석)</span>
+            </label>
+            <select
+              value={formData.mbti}
+              onChange={(e) => setFormData({ ...formData, mbti: e.target.value })}
+              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:outline-none focus:border-yellow-500"
+            >
+              <option value="">선택 안함</option>
+              {Object.entries(MBTI_TYPES).map(([type, info]) => (
+                <option key={type} value={type}>{type} - {info.title}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 분석 버튼 */}
+          <button
+            onClick={handleAnalyze}
+            className="w-full py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-gray-900 font-bold rounded-xl hover:opacity-90 transition-all text-lg"
+          >
+            무료 분석 시작 →
+          </button>
+        </div>
+
+        {/* 안내 문구 */}
+        <div className="mt-6 text-center text-gray-500 text-sm">
+          <p>✓ 정밀 만세력 기반 계산</p>
+          <p>✓ 회원가입 불필요</p>
+        </div>
+      </div>
     </div>
   );
 }
