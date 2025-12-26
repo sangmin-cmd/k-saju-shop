@@ -30,7 +30,7 @@ export default function Footer() {
           <div>
             <h3 className="font-bold mb-4">문의</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>이메일: support@sajutype.kr</li>
+              <li>이메일: amoretto75@naver.com</li>
               <li>전화: 010-2806-2497</li>
             </ul>
           </div>
@@ -46,6 +46,7 @@ export default function Footer() {
             <p><strong>주소:</strong> 경기도 용인시 기흥구 동백죽전대로 444, C602-B23호(중동, 쥬네브)</p>
             <p><strong>전화번호:</strong> 010-2806-2497</p>
             <p><strong>통신판매업 신고번호:</strong> 신고 접수중</p>
+            <p><strong>이메일:</strong> amoretto75@naver.com</p>
           </div>
 
           {/* 저작권 */}

@@ -61,7 +61,7 @@ export default function RefundPage() {
             <h2 className="text-xl font-bold mb-4">📞 고객센터</h2>
             <div className="bg-gray-100 p-4 rounded-lg space-y-2">
               <p><strong>전화:</strong> 010-2806-2497</p>
-              <p><strong>이메일:</strong> support@sajutype.kr</p>
+              <p><strong>이메일:</strong> amoretto75@naver.com</p>
               <p><strong>운영시간:</strong> 평일 10:00 ~ 18:00 (주말/공휴일 휴무)</p>
             </div>
           </section>
