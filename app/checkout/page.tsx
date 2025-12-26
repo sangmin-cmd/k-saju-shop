@@ -31,7 +31,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   // 토스페이먼츠 클라이언트 키 (테스트용)
-  const clientKey = 'test_gck_DnyRpQWGrNayBYA4OZ2gVKwv1M9E';
+  const clientKey = 'test_ck_AQ92ymxN34PdEJAwjEBK3ajRKXvd';
 
   useEffect(() => {
     if (user) {
