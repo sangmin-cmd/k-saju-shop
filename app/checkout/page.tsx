@@ -5,12 +5,19 @@ import { useCart } from '../components/CartProvider';
 import { useAuth } from '../components/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createOrder, updateOrderStatus } from '../lib/orders';
+import Script from 'next/script';
+
+declare global {
+  interface Window {
+    TossPayments: any;
+  }
+}
 
 export default function CheckoutPage() {
   const { items, totalAmount, clearCart } = useCart();
   const { user } = useAuth();
   const router = useRouter();
+  const [isSDKReady, setIsSDKReady] = useState(false);
   
   const [formData, setFormData] = useState({
     customerName: '',
@@ -22,7 +29,9 @@ export default function CheckoutPage() {
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
-  // 로그인한 사용자의 정보로 폼 자동 채우기
+  // 토스페이먼츠 클라이언트 키 (테스트용)
+  const clientKey = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
+
   useEffect(() => {
     if (user) {
       setFormData(prev => ({
@@ -81,118 +90,70 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handlePayment = async () => {
     if (!validate()) {
       alert('입력 정보를 확인해주세요');
       return;
     }
 
+    if (!isSDKReady || !window.TossPayments) {
+      alert('결제 모듈을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
     try {
-      // 주문 정보 생성
-      const orderId = `ORDER-${Date.now()}`;
+      const tossPayments = window.TossPayments(clientKey);
+      
+      const orderId = `ORDER-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const orderName = items.length === 1 
         ? items[0].product.name
         : `${items[0].product.name} 외 ${items.length - 1}건`;
 
-      // 데이터베이스에 주문 저장
-      const orderResult = await createOrder({
-        orderId: orderId,
-        userId: user?.id,
+      // 주문 정보를 로컬스토리지에 임시 저장
+      localStorage.setItem('pendingOrder', JSON.stringify({
+        orderId,
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
         customerPhone: formData.customerPhone,
-        items: items,
-        totalAmount: totalAmount,
-        paymentMethod: 'card',
-      });
+        items,
+        totalAmount,
+      }));
 
-      if (!orderResult.success) {
-        throw new Error(orderResult.error || '주문 생성 실패');
-      }
-
-      // 이메일 발송용 데이터 준비
-      const emailData = {
+      // 토스페이먼츠 결제창 호출
+      await tossPayments.requestPayment('카드', {
+        amount: totalAmount,
+        orderId: orderId,
+        orderName: orderName,
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
-        orderId: orderId,
-        orderDate: new Date().toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        products: items.map(item => ({
-          name: item.product.name,
-          price: item.product.price,
-          quantity: item.quantity,
-        })),
-        totalAmount: totalAmount,
-      };
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`,
+      });
 
-      // 1. 주문 확인 이메일 발송
-      try {
-        await fetch('/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'order_confirmation',
-            to: formData.customerEmail,
-            data: emailData,
-          }),
-        });
-        console.log('주문 확인 이메일 발송 완료');
-      } catch (emailError) {
-        console.error('주문 확인 이메일 발송 실패:', emailError);
+    } catch (error: any) {
+      if (error.code === 'USER_CANCEL') {
+        console.log('결제 취소');
+      } else {
+        console.error('Payment error:', error);
+        alert('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
-
-      // 임시: 결제 성공으로 간주
-      alert('결제가 완료되었습니다! (테스트 모드)\n\n이메일을 확인해주세요.');
-
-      // 주문 상태 업데이트 (결제 완료)
-      await updateOrderStatus(orderId, 'paid');
-
-      // 2. 결제 완료 이메일 발송
-      try {
-        await fetch('/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'payment_success',
-            to: formData.customerEmail,
-            data: emailData,
-          }),
-        });
-        console.log('결제 완료 이메일 발송 완료');
-      } catch (emailError) {
-        console.error('결제 완료 이메일 발송 실패:', emailError);
-      }
-      
-      // 장바구니 비우기
-      clearCart();
-      
-      // 주문 완료 페이지로 이동
-      router.push(`/order/complete?orderId=${orderId}`);
-      
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
   return (
-    <div className="min-h-screen py-12 bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold mb-8">주문/결제</h1>
+    <>
+      <Script
+        src="https://js.tosspayments.com/v1/payment"
+        onLoad={() => setIsSDKReady(true)}
+      />
 
-        <form onSubmit={handleSubmit}>
+      <div className="min-h-screen py-12 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold mb-8">주문/결제</h1>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* 주문 정보 */}
             <div className="lg:col-span-2 space-y-6">
-              {/* 주문자 정보 */}
-              <div className="card p-6">
+              <div className="card p-6 bg-white rounded-xl shadow-md">
                 <h2 className="text-xl font-bold mb-4">주문자 정보</h2>
                 
                 <div className="space-y-4">
@@ -204,7 +165,7 @@ export default function CheckoutPage() {
                       type="text"
                       value={formData.customerName}
                       onChange={(e) => setFormData({...formData, customerName: e.target.value})}
-                      className={`input-field ${errors.customerName ? 'border-red-500' : ''}`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.customerName ? 'border-red-500' : 'border-gray-300'}`}
                       placeholder="홍길동"
                     />
                     {errors.customerName && (
@@ -220,15 +181,13 @@ export default function CheckoutPage() {
                       type="email"
                       value={formData.customerEmail}
                       onChange={(e) => setFormData({...formData, customerEmail: e.target.value})}
-                      className={`input-field ${errors.customerEmail ? 'border-red-500' : ''}`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.customerEmail ? 'border-red-500' : 'border-gray-300'}`}
                       placeholder="example@email.com"
                     />
                     {errors.customerEmail && (
                       <p className="text-red-500 text-sm mt-1">{errors.customerEmail}</p>
                     )}
-                    <p className="text-sm text-gray-500 mt-1">
-                      분석 결과를 받을 이메일 주소입니다
-                    </p>
+                    <p className="text-sm text-gray-500 mt-1">분석 결과를 받을 이메일 주소입니다</p>
                   </div>
 
                   <div>
@@ -239,7 +198,7 @@ export default function CheckoutPage() {
                       type="tel"
                       value={formData.customerPhone}
                       onChange={(e) => setFormData({...formData, customerPhone: e.target.value})}
-                      className={`input-field ${errors.customerPhone ? 'border-red-500' : ''}`}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.customerPhone ? 'border-red-500' : 'border-gray-300'}`}
                       placeholder="010-1234-5678"
                     />
                     {errors.customerPhone && (
@@ -249,14 +208,13 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* 주문 상품 */}
-              <div className="card p-6">
+              <div className="card p-6 bg-white rounded-xl shadow-md">
                 <h2 className="text-xl font-bold mb-4">주문 상품</h2>
                 
                 <div className="space-y-4">
                   {items.map(item => (
                     <div key={item.product.id} className="flex items-center gap-4 pb-4 border-b last:border-b-0">
-                      <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
                         <span className="text-2xl">
                           {item.product.category === 'basic' && '📊'}
                           {item.product.category === 'premium' && '⭐'}
@@ -266,19 +224,17 @@ export default function CheckoutPage() {
                       <div className="flex-1">
                         <div className="font-semibold">{item.product.name}</div>
                         <div className="text-sm text-gray-600">수량: {item.quantity}개</div>
+                        <div className="text-sm text-blue-600 font-medium">📦 서비스 제공기간: 24시간 이내</div>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold">
-                          {(item.product.price * item.quantity).toLocaleString()}원
-                        </div>
+                        <div className="font-bold">{(item.product.price * item.quantity).toLocaleString()}원</div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* 이용약관 */}
-              <div className="card p-6">
+              <div className="card p-6 bg-white rounded-xl shadow-md">
                 <h2 className="text-xl font-bold mb-4">약관 동의</h2>
                 
                 <div className="space-y-3">
@@ -287,17 +243,15 @@ export default function CheckoutPage() {
                       type="checkbox"
                       checked={formData.agreeTerms}
                       onChange={(e) => setFormData({...formData, agreeTerms: e.target.checked})}
-                      className="mt-1 mr-3"
+                      className="mt-1 mr-3 w-5 h-5"
                     />
                     <span className="flex-1">
-                      <span className="font-semibold">[필수]</span> 이용약관에 동의합니다
-                      <Link href="/terms" className="text-primary-500 text-sm ml-2">
-                        보기
-                      </Link>
+                      <span className="font-semibold text-red-500">[필수]</span> 이용약관에 동의합니다
+                      <Link href="/terms" className="text-blue-500 text-sm ml-2">보기</Link>
                     </span>
                   </label>
                   {errors.agreeTerms && (
-                    <p className="text-red-500 text-sm ml-6">{errors.agreeTerms}</p>
+                    <p className="text-red-500 text-sm ml-8">{errors.agreeTerms}</p>
                   )}
 
                   <label className="flex items-start cursor-pointer">
@@ -305,25 +259,22 @@ export default function CheckoutPage() {
                       type="checkbox"
                       checked={formData.agreePrivacy}
                       onChange={(e) => setFormData({...formData, agreePrivacy: e.target.checked})}
-                      className="mt-1 mr-3"
+                      className="mt-1 mr-3 w-5 h-5"
                     />
                     <span className="flex-1">
-                      <span className="font-semibold">[필수]</span> 개인정보처리방침에 동의합니다
-                      <Link href="/privacy" className="text-primary-500 text-sm ml-2">
-                        보기
-                      </Link>
+                      <span className="font-semibold text-red-500">[필수]</span> 개인정보처리방침에 동의합니다
+                      <Link href="/privacy" className="text-blue-500 text-sm ml-2">보기</Link>
                     </span>
                   </label>
                   {errors.agreePrivacy && (
-                    <p className="text-red-500 text-sm ml-6">{errors.agreePrivacy}</p>
+                    <p className="text-red-500 text-sm ml-8">{errors.agreePrivacy}</p>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* 결제 정보 */}
             <div>
-              <div className="card p-6 sticky top-20">
+              <div className="card p-6 bg-white rounded-xl shadow-md sticky top-20">
                 <h2 className="text-xl font-bold mb-4">결제 정보</h2>
 
                 <div className="space-y-3 mb-6 pb-6 border-b">
@@ -339,43 +290,36 @@ export default function CheckoutPage() {
 
                 <div className="flex justify-between mb-6 text-xl">
                   <span className="font-bold">최종 결제 금액</span>
-                  <span className="font-bold text-primary-600">
-                    {totalAmount.toLocaleString()}원
-                  </span>
+                  <span className="font-bold text-blue-600">{totalAmount.toLocaleString()}원</span>
                 </div>
 
                 <button
-                  type="submit"
-                  className="w-full btn-primary py-4 text-lg mb-4"
+                  type="button"
+                  onClick={handlePayment}
+                  disabled={!isSDKReady}
+                  className={`w-full py-4 text-lg font-bold rounded-lg transition-all ${
+                    isSDKReady 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
                 >
-                  결제하기
+                  {isSDKReady ? '결제하기' : '결제 모듈 로딩중...'}
                 </button>
 
-                <div className="space-y-2 text-sm text-gray-600">
-                  <div className="flex items-start">
-                    <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>결제 후 24시간 내 이메일 발송</span>
-                  </div>
-                  <div className="flex items-start">
-                    <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>7일 이내 환불 가능</span>
-                  </div>
-                  <div className="flex items-start">
-                    <svg className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>안전한 결제 시스템</span>
-                  </div>
+                <div className="mt-4 space-y-2 text-sm text-gray-600">
+                  <div className="flex items-start"><span className="mr-2">✓</span><span>결제 후 24시간 내 이메일 발송</span></div>
+                  <div className="flex items-start"><span className="mr-2">✓</span><span>7일 이내 환불 가능 (발송 전)</span></div>
+                  <div className="flex items-start"><span className="mr-2">✓</span><span>토스페이먼츠 안전결제</span></div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t">
+                  <p className="text-xs text-gray-500 text-center">토스페이먼츠를 통한 안전한 결제</p>
                 </div>
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
