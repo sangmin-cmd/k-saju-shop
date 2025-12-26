@@ -92,25 +92,49 @@ const MBTI_TYPES: {[key: string]: {title: string, element: string}} = {
   'ESFP': { title: '연예인', element: 'fire' }
 };
 
-// 사주 계산 함수
+// 절기 기반 월지 계산
+function getSolarTermBranch(year: number, month: number, day: number): number {
+  const terms = [
+    { m: 0, d: 6, b: 1 },   // 1월 소한 → 축월(1)
+    { m: 1, d: 4, b: 2 },   // 2월 입춘 → 인월(2)
+    { m: 2, d: 6, b: 3 },   // 3월 경칩 → 묘월(3)
+    { m: 3, d: 5, b: 4 },   // 4월 청명 → 진월(4)
+    { m: 4, d: 6, b: 5 },   // 5월 입하 → 사월(5)
+    { m: 5, d: 6, b: 6 },   // 6월 망종 → 오월(6)
+    { m: 6, d: 7, b: 7 },   // 7월 소서 → 미월(7)
+    { m: 7, d: 8, b: 8 },   // 8월 입추 → 신월(8)
+    { m: 8, d: 8, b: 9 },   // 9월 백로 → 유월(9)
+    { m: 9, d: 8, b: 10 },  // 10월 한로 → 술월(10)
+    { m: 10, d: 7, b: 11 }, // 11월 입동 → 해월(11)
+    { m: 11, d: 7, b: 0 }   // 12월 대설 → 자월(0)
+  ];
+  const birth = new Date(year, month - 1, day);
+  for (let i = terms.length - 1; i >= 0; i--) {
+    if (birth >= new Date(year, terms[i].m, terms[i].d)) return terms[i].b;
+  }
+  return 0;
+}
+
+// 사주 계산 함수 (정밀 엔진)
 function calculateSaju(year: number, month: number, day: number, hour: number) {
-  // 간단한 사주 계산 (실제로는 만세력 기반이 필요)
-  const yearStem = (year - 4) % 10;
-  const yearBranch = (year - 4) % 12;
+  // 연주: 입춘(2/4) 기준 연도 조정
+  const adjYear = new Date(year, month - 1, day) < new Date(year, 1, 4) ? year - 1 : year;
+  const yearStem = ((adjYear - 4) % 10 + 10) % 10;
+  const yearBranch = ((adjYear - 4) % 12 + 12) % 12;
   
-  // 월주 계산 (간략화)
-  const monthBranch = (month + 1) % 12;
-  const monthStem = ((yearStem % 5) * 2 + month) % 10;
+  // 월주: 절기 기반 월지 계산
+  const monthBranch = getSolarTermBranch(year, month, day);
+  const monthStem = (((yearStem % 5) * 2 + 2) + ((monthBranch - 2 + 12) % 12)) % 10;
   
-  // 일주 계산 (간략화 - 실제로는 만세력 필요)
-  const baseDate = new Date(1900, 0, 1);
-  const targetDate = new Date(year, month - 1, day);
-  const diffDays = Math.floor((targetDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
-  const dayStem = (diffDays + 10) % 10;
-  const dayBranch = (diffDays + 10) % 12;
+  // 일주: 1900년 1월 1일 기준
+  const base = Date.UTC(1900, 0, 1);
+  const birth = Date.UTC(year, month - 1, day);
+  const days = Math.floor((birth - base) / 86400000);
+  const dayStem = ((days % 10) + 10) % 10;
+  const dayBranch = ((days + 10) % 12 + 12) % 12;
   
-  // 시주 계산
-  const hourBranch = Math.floor((hour + 1) / 2) % 12;
+  // 시주: 30분 기준 시진 계산
+  const hourBranch = Math.floor((hour + 0.5) / 2) % 12;
   const hourStem = ((dayStem % 5) * 2 + hourBranch) % 10;
   
   return {
