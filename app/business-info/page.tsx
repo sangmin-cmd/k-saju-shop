@@ -41,28 +41,22 @@ export default function BusinessInfoPage() {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">상호명</p>
-                  <p className="font-semibold text-lg">Human Insight Core</p>
+                  <p className="font-semibold text-lg">인사이트 금융경영연구소</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">대표자명</p>
-                  <p className="font-semibold">[대표자명]</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    * 정식 사업자 등록 후 업데이트 예정
-                  </p>
+                  <p className="font-semibold">이상민</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">사업자등록번호</p>
-                  <p className="font-semibold">[123-45-67890]</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    * 정식 사업자 등록 후 업데이트 예정
-                  </p>
+                  <p className="font-semibold">110-37-62594</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">통신판매업신고번호</p>
-                  <p className="font-semibold">[제2024-서울강남-12345호]</p>
+                  <p className="font-semibold">[신고 준비중]</p>
                   <p className="text-xs text-gray-500 mt-1">
                     * 통신판매업 신고 후 업데이트 예정
                   </p>
@@ -72,23 +66,17 @@ export default function BusinessInfoPage() {
               <div className="space-y-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">사업장 소재지</p>
-                  <p className="font-semibold">[서울특별시 강남구 테헤란로 123]</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    * 정식 사업장 확정 후 업데이트 예정
-                  </p>
+                  <p className="font-semibold">경기도 용인시 기흥구 동백죽전대로 444, C602-B23호(중동, 쥬네브)</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">이메일</p>
-                  <p className="font-semibold">contact@humaninsight.co.kr</p>
+                  <p className="font-semibold">amoretto75@naver.com</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-gray-600 mb-1">고객센터</p>
-                  <p className="font-semibold">[02-1234-5678]</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    * 현재 이메일로만 문의 가능
-                  </p>
+                  <p className="font-semibold">010-2806-2497</p>
                 </div>
 
                 <div>
@@ -136,7 +124,7 @@ export default function BusinessInfoPage() {
                 <div className="border-l-4 border-primary-500 pl-4 py-2">
                   <p className="text-sm text-gray-600 mb-1">신고 기관</p>
                   <p className="font-semibold">
-                    관할 구청 (서울시 강남구청 예정)
+                    관할 구청 (경기도 용인시 기흥구청)
                   </p>
                 </div>
 
@@ -152,7 +140,7 @@ export default function BusinessInfoPage() {
 
                 <div className="border-l-4 border-primary-500 pl-4 py-2">
                   <p className="text-sm text-gray-600 mb-1">개업일</p>
-                  <p className="font-semibold">2024년 12월 (예정)</p>
+                  <p className="font-semibold">2021년 11월 02일</p>
                 </div>
               </div>
             </div>
@@ -217,7 +205,7 @@ export default function BusinessInfoPage() {
               </div>
               <div className="flex items-center justify-between py-3">
                 <p className="font-semibold">결제 서비스</p>
-                <p>토스페이먼츠 (예정)</p>
+                <p>토스페이먼츠</p>
               </div>
             </div>
           </div>
@@ -229,7 +217,7 @@ export default function BusinessInfoPage() {
             <div className="space-y-4 text-gray-700">
               <p>
                 본 웹사이트에 게시된 모든 콘텐츠(텍스트, 이미지, 로고, 디자인,
-                분석 알고리즘 등)의 저작권 및 지적재산권은 Human Insight Core에
+                분석 알고리즘 등)의 저작권 및 지적재산권은 인사이트 금융경영연구소에
                 있습니다.
               </p>
 
@@ -249,7 +237,6 @@ export default function BusinessInfoPage() {
                 <ul className="list-disc list-inside text-sm space-y-1 ml-4">
                   <li>K-Saju™ (상표 출원 예정)</li>
                   <li>FateMate™ (상표 출원 예정)</li>
-                  <li>Human Insight Core™ (상표 등록 준비 중)</li>
                 </ul>
               </div>
             </div>
