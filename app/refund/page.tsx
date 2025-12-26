@@ -169,7 +169,7 @@ export default function RefundPage() {
                     <div>
                       <p className="font-semibold mb-1">고객센터 문의</p>
                       <p className="text-sm">
-                        이메일(contact@humaninsight.co.kr) 또는 사이트 내 문의하기를
+                        이메일(amoretto75@naver.com) 또는 사이트 내 문의하기를
                         통해 환불 요청
                       </p>
                     </div>
@@ -326,7 +326,7 @@ export default function RefundPage() {
                 </svg>
                 <div>
                   <p className="text-sm text-gray-600">이메일</p>
-                  <p className="font-semibold">contact@humaninsight.co.kr</p>
+                  <p className="font-semibold">amoretto75@naver.com</p>
                 </div>
               </div>
 
