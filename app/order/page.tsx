@@ -131,7 +131,7 @@ export default function Home() {
           {/* CTA 버튼 */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link 
-              href="/solo.html" 
+              href="/free" 
               className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               무료 체험하기
@@ -261,7 +261,7 @@ export default function Home() {
 
           <div className="text-center mt-8">
             <Link 
-              href="/solo.html" 
+              href="/free" 
               className="inline-block px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
             >
               무료로 체험해보기 →
@@ -696,7 +696,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              href="/solo.html" 
+              href="/free" 
               className="px-8 py-4 bg-white text-cyan-600 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg"
             >
               무료 체험하기
@@ -719,7 +719,7 @@ export default function Home() {
           </span>
           <div className="flex gap-3 w-full sm:w-auto">
             <Link 
-              href="/solo.html" 
+              href="/free" 
               className="flex-1 sm:flex-none px-6 py-3 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
             >
               무료 체험

@@ -10,7 +10,7 @@ export default function Footer() {
             <h3 className="font-bold mb-4">서비스</h3>
             <ul className="space-y-2 text-gray-400">
               <li><Link href="/products" className="hover:text-white">상품 목록</Link></li>
-              <li><Link href="/solo.html" className="hover:text-white">무료 체험</Link></li>
+              <li><Link href="/free" className="hover:text-white">무료 체험</Link></li>
             </ul>
           </div>
           <div>

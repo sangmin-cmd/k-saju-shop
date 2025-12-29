@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ProductCard from './components/ProductCard';
 import { products, popularProducts } from './lib/products';
+import UseCasesSection from './components/UseCasesSection';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
@@ -85,69 +86,83 @@ export default function Home() {
 
   return (
     <div className="bg-white">
-      {/* ========== 1. HERO ========== */}
+      {/* ========== 1. HERO - 프리미엄 네이비+골드 ========== */}
       <section className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #0a1628 0%, #1e3a5f 30%, #0d7377 70%, #14b8a6 100%)'
+          background: 'linear-gradient(135deg, #0a0f1a 0%, #1a2744 40%, #243b61 70%, #1a2744 100%)'
         }}>
         
-        {/* 배경 효과 */}
+        {/* 배경 효과 - 은은한 골드 톤 */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-blue-400/5 rounded-full blur-3xl"></div>
+          {/* 미세한 별자리 패턴 */}
+          <div className="absolute inset-0 opacity-[0.03]"
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, #d4af37 1px, transparent 0)`,
+              backgroundSize: '50px 50px'
+            }}
+          ></div>
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto text-center py-20">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-8 border border-white/20">
-            <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
-            <span className="text-white/90 text-sm font-medium">정밀 계산 + MBTI 교차 분석</span>
+        <div className="relative z-10 max-w-5xl mx-auto text-center py-24">
+          {/* Badge - 골드 테두리 */}
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 backdrop-blur-sm rounded-full mb-10 border border-amber-500/30">
+            <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
+            <span className="text-amber-200/90 text-sm font-medium tracking-wide">정밀 계산 + MBTI 교차 분석</span>
           </div>
           
-          {/* H1 */}
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            나를 이해하고,<br />타이밍까지 읽는 분석.
+          {/* H1 - 메인 카피 */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight"
+            style={{ color: '#F5F5F0' }}>
+            운명은 정교한<br />구조 안에 있습니다.
           </h1>
           
-          {/* Sub */}
-          <p className="text-lg md:text-xl text-white/80 mb-8 max-w-3xl mx-auto">
-            K-Saju 정밀 계산 엔진 + MBTI 교차 검증으로,<br className="hidden md:block" />
-            감이 아니라 <span className="text-cyan-300 font-semibold">구조</span>로 해석합니다.
+          {/* Sub - 부드러운 크림톤 */}
+          <p className="text-lg md:text-xl mb-10 max-w-3xl mx-auto leading-relaxed"
+            style={{ color: 'rgba(245, 245, 240, 0.75)' }}>
+            뻔한 위로나 모호한 조언은 이제 그만.<br className="hidden md:block" />
+            <span className="text-amber-300 font-semibold">100% 재현 가능한 K-Saju 엔진</span>이 당신의 성향부터 타이밍까지 분석합니다.
           </p>
 
-          {/* 핵심 3줄 */}
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <span className="text-white/90 text-sm">🎯 성향 — 어떻게 선택하는지</span>
+          {/* 핵심 3줄 - 더 넓은 여백 */}
+          <div className="flex flex-wrap justify-center gap-5 mb-14">
+            <div className="px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">🎯 성향 — 어떻게 선택하는지</span>
             </div>
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <span className="text-white/90 text-sm">🌊 흐름 — 언제 밀고/쉬어야 하는지</span>
+            <div className="px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">🌊 흐름 — 언제 밀고/쉬어야 하는지</span>
             </div>
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-              <span className="text-white/90 text-sm">⚡ 액션 — 지금 해야 할 것/피해야 할 것</span>
+            <div className="px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">⚡ 액션 — 지금 해야 할 것/피해야 할 것</span>
             </div>
           </div>
 
-          {/* CTA 버튼 */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          {/* CTA 버튼 - 프리미엄 스타일 */}
+          <div className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-14">
             <Link 
-              href="/solo.html" 
-              className="px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+              href="/free" 
+              className="group px-10 py-4 bg-white text-gray-900 text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
             >
               무료 체험하기
             </Link>
             <Link 
               href="/products" 
-              className="px-8 py-4 bg-cyan-500 text-white text-lg font-semibold rounded-xl hover:bg-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+              className="px-10 py-4 text-lg font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 border-2"
+              style={{ 
+                background: 'linear-gradient(135deg, #d4af37 0%, #b8960c 100%)',
+                borderColor: '#d4af37',
+                color: '#0a0f1a'
+              }}
             >
               프리미엄 분석 →
             </Link>
           </div>
 
-          {/* 신뢰 배지 */}
-          <div className="flex flex-wrap justify-center gap-6 text-white/70 text-sm">
+          {/* 신뢰 배지 - 더 세련된 스타일 */}
+          <div className="flex flex-wrap justify-center gap-8 text-sm" style={{ color: 'rgba(245, 245, 240, 0.6)' }}>
             <div className="flex items-center gap-2">
-              <span className="text-yellow-400">★</span>
+              <span className="text-amber-400">★</span>
               <span>평균 4.9점</span>
             </div>
             <div className="flex items-center gap-2">
@@ -155,41 +170,43 @@ export default function Home() {
               <span>1,000+ 분석 완료</span>
             </div>
             <div className="flex items-center gap-2">
-              <span>✓</span>
+              <span className="text-amber-400">✓</span>
               <span>만족 보장 · 환불 정책</span>
             </div>
           </div>
         </div>
 
         {/* 하단 그라디언트 */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white to-transparent"></div>
       </section>
 
-      {/* ========== 2. 결과물 미리보기 ========== */}
-      <section className="bg-white py-24 px-4" id="preview">
+      {/* ========== 2. 결과물 미리보기 - 프리미엄 글래스모피즘 ========== */}
+      <section className="py-28 px-4" id="preview"
+        style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f8f6f3 50%, #ffffff 100%)' }}>
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 rounded-full text-sm font-medium mb-5 border border-amber-200">
               리포트 미리보기
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              이런 리포트를 받게 됩니다
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-5">
+              동양의 지혜 × 서양의 분석
             </h2>
-            <p className="text-lg text-gray-600">
-              공유하고 싶어지는 한 장 요약 + 실행 가이드까지.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              당신의 <strong className="text-gray-900">기질(사주)</strong>과 <strong className="text-gray-900">태도(MBTI)</strong>를 결합해<br className="hidden md:block" />
+              '공유하고 싶어지는 한 장의 요약'으로 정리해 드립니다.
             </p>
           </div>
 
-          {/* 탭 */}
-          <div className="flex justify-center gap-2 mb-8">
+          {/* 탭 - 더 명확한 활성화 표시 */}
+          <div className="flex justify-center gap-2 mb-10">
             {reportPreviews.map((preview, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveTab(idx)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
                   activeTab === idx
-                    ? 'bg-gray-900 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-xl scale-105 border-b-4 border-amber-500'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 shadow-md border border-gray-200'
                 }`}
               >
                 {preview.title}
@@ -197,485 +214,501 @@ export default function Home() {
             ))}
           </div>
 
-          {/* 미리보기 카드 */}
-          <div className={`bg-gradient-to-br ${reportPreviews[activeTab].gradient} rounded-3xl p-8 text-white max-w-2xl mx-auto shadow-2xl`}>
-            <div className="text-sm opacity-80 mb-2">{reportPreviews[activeTab].title}</div>
-            <div className="text-lg font-medium mb-6">{reportPreviews[activeTab].subtitle}</div>
-            
-            {activeTab === 0 && (
-              <div className="space-y-4">
-                <div className="text-3xl font-bold">{reportPreviews[0].content.type}</div>
-                <div className="text-lg opacity-90">{reportPreviews[0].content.label}</div>
-                <div className="flex gap-2 flex-wrap">
-                  {reportPreviews[0].content.keywords.map((kw, i) => (
-                    <span key={i} className="px-3 py-1 bg-white/20 rounded-full text-sm">{kw}</span>
-                  ))}
+          {/* 미리보기 카드 - 글래스모피즘 + 골드 테두리 */}
+          <div className="max-w-2xl mx-auto">
+            {/* 배경 효과 */}
+            <div className="relative">
+              {/* 은은한 오로라 배경 */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-amber-500/20 rounded-[2rem] blur-2xl"></div>
+              
+              {/* 메인 카드 - 글래스모피즘 */}
+              <div className="relative rounded-3xl p-8 md:p-10 shadow-2xl border border-amber-500/30"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(26, 39, 68, 0.95) 0%, rgba(36, 59, 97, 0.95) 50%, rgba(26, 39, 68, 0.95) 100%)',
+                  backdropFilter: 'blur(20px)'
+                }}>
+                
+                {/* 골드 코너 장식 */}
+                <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-amber-500/50 rounded-tl-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-amber-500/50 rounded-br-3xl"></div>
+                
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold mb-2" style={{ color: '#F5F5F0' }}>{reportPreviews[activeTab].title}</h3>
+                  <p style={{ color: 'rgba(245, 245, 240, 0.7)' }}>{reportPreviews[activeTab].subtitle}</p>
                 </div>
-                <div className="mt-4 p-4 bg-white/20 rounded-xl">
-                  <div className="text-sm opacity-70 mb-1">핵심 인사이트</div>
-                  <div className="font-medium">{reportPreviews[0].content.insight}</div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 1 && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  {reportPreviews[1].content.elements.map((el, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <span className="w-8 text-sm">{el.name}</span>
-                      <div className="flex-1 h-4 bg-white/20 rounded-full overflow-hidden">
-                        <div className={`h-full ${el.color}`} style={{ width: `${el.value * 20}%` }}></div>
+                
+                {activeTab === 0 && (
+                  <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
+                    {/* ENFP × 甲木 - 폰트 대비 */}
+                    <div className="text-center mb-8">
+                      <div className="flex items-center justify-center gap-3">
+                        <span className="text-4xl font-bold tracking-tight" style={{ color: '#F5F5F0', fontFamily: 'system-ui, sans-serif' }}>ENFP</span>
+                        <span className="text-2xl text-amber-400">×</span>
+                        <span className="text-4xl font-bold" style={{ color: '#d4af37', fontFamily: 'serif' }}>甲木</span>
                       </div>
-                      <span className="text-sm">{el.value}</span>
+                      <p className="mt-3 text-lg" style={{ color: 'rgba(245, 245, 240, 0.8)' }}>성장하는 아이디어</p>
                     </div>
-                  ))}
-                </div>
-                <div className="mt-4 p-4 bg-white/20 rounded-xl">
-                  <div className="text-sm opacity-70 mb-1">보완 전략</div>
-                  <div className="font-medium">{reportPreviews[1].content.recommendation}</div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 2 && (
-              <div className="space-y-4">
-                <div className="space-y-3">
-                  {reportPreviews[2].content.periods.map((p, i) => (
-                    <div key={i} className="flex items-center gap-4 p-3 bg-white/10 rounded-lg">
-                      <span className="font-bold text-lg">{p.month}</span>
-                      <div className="flex-1">
-                        <div className="text-sm">✓ {p.action}</div>
-                        <div className="text-sm opacity-70">⚠ {p.risk} 주의</div>
-                      </div>
+                    
+                    {/* 키워드 뱃지 - 강화된 스타일 */}
+                    <div className="flex justify-center gap-3 mb-8">
+                      {reportPreviews[0].content.keywords.map((kw, i) => (
+                        <span key={i} className="px-4 py-2 rounded-full text-sm font-medium border border-amber-500/30 shadow-lg"
+                          style={{ 
+                            background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%)',
+                            color: '#d4af37'
+                          }}>
+                          {kw}
+                        </span>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                <div className="mt-4 p-4 bg-white/20 rounded-xl">
-                  <div className="text-sm opacity-70 mb-1">2026 핵심 메시지</div>
-                  <div className="font-medium">{reportPreviews[2].content.keyMessage}</div>
-                </div>
+                    
+                    {/* 설명 - 강조 처리 */}
+                    <p className="text-center leading-relaxed text-lg" style={{ color: 'rgba(245, 245, 240, 0.9)' }}>
+                      끊임없이 새로운 도전을 멈추지 않는 에너자이저.<br />
+                      아이디어가 샘솟지만 <span className="text-amber-400 font-semibold">마무리에 집중</span>이 필요한 시기
+                    </p>
+                  </div>
+                )}
+                
+                {activeTab === 1 && (
+                  <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
+                    <div className="space-y-4 mb-6">
+                      {reportPreviews[1].content.elements.map((el, i) => (
+                        <div key={i} className="flex items-center gap-4">
+                          <span className="w-10 text-xl font-bold" style={{ color: '#d4af37', fontFamily: 'serif' }}>{el.name}</span>
+                          <div className="flex-1 bg-white/10 rounded-full h-5 overflow-hidden border border-white/10">
+                            <div className={`${el.color} h-full rounded-full`} style={{width: `${el.value * 20}%`}}></div>
+                          </div>
+                          <span className="w-8 text-right font-medium" style={{ color: '#F5F5F0' }}>{el.value}</span>
+                        </div>
+                    ))}
+                    </div>
+                    <div className="bg-amber-500/10 rounded-xl p-4 text-center border border-amber-500/20">
+                      <p className="text-sm" style={{ color: '#d4af37' }}>{reportPreviews[1].content.recommendation}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {activeTab === 2 && (
+                  <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
+                    <div className="space-y-4 mb-6">
+                      {reportPreviews[2].content.periods.map((period, i) => (
+                        <div key={i} className="flex items-center justify-between bg-white/5 rounded-xl p-4 border border-white/10">
+                          <span className="font-bold" style={{ color: '#d4af37' }}>{period.month}</span>
+                          <span className="text-emerald-400 font-medium">✓ {period.action}</span>
+                          <span className="text-rose-400 font-medium">⚠ {period.risk}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bg-amber-500/10 rounded-xl p-4 text-center border border-amber-500/20">
+                      <p className="font-medium" style={{ color: '#d4af37' }}>{reportPreviews[2].content.keyMessage}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* CTA 버튼 - 내 결과 카드 만들기 */}
+                <Link 
+                  href="/free"
+                  className="mt-8 w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                  style={{
+                    background: 'linear-gradient(135deg, #d4af37 0%, #b8960c 100%)',
+                    color: '#0a0f1a'
+                  }}
+                >
+                  <span>✨</span>
+                  <span>내 결과 카드 만들기</span>
+                  <span>→</span>
+                </Link>
               </div>
-            )}
-          </div>
-
-          <div className="text-center mt-8">
-            <Link 
-              href="/solo.html" 
-              className="inline-block px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              무료로 체험해보기 →
-            </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ========== 3. HOW IT WORKS ========== */}
-      <section className="bg-gray-50 py-24 px-4">
+      {/* ========== 3. 인기 상품 ========== */}
+      <section className="bg-gray-50 py-28 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              3분이면 끝. 결과는 바로 받습니다.
+            <span className="inline-block px-4 py-1.5 bg-amber-50 text-amber-700 rounded-full text-sm font-medium mb-5 border border-amber-200">
+              상품 안내
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-5">
+              나에게 맞는 분석을 선택하세요
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold">1</div>
-              <div className="w-16 h-16 bg-cyan-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">✏️</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">입력</h3>
-              <p className="text-gray-600 mb-2">생년월일 · 시간(선택) + MBTI(선택)</p>
-              <p className="text-sm text-gray-400">💡 생시를 몰라도 분석 가능합니다.</p>
-            </div>
-
-            {/* Step 2 */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold">2</div>
-              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">⚙️</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">정밀 계산</h3>
-              <p className="text-gray-600 mb-2">절기/만세력 기반 계산 + 패턴 매칭</p>
-              <p className="text-sm text-gray-400">💡 MBTI 교차 검증으로 정확도 향상</p>
-            </div>
-
-            {/* Step 3 */}
-            <div className="bg-white rounded-2xl p-8 shadow-lg relative">
-              <div className="absolute -top-4 left-8 w-8 h-8 bg-cyan-500 text-white rounded-full flex items-center justify-center font-bold">3</div>
-              <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">📄</span>
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900">리포트 제공</h3>
-              <p className="text-gray-600 mb-2">요약 + 상세 + 실행 가이드</p>
-              <p className="text-sm text-gray-400">💡 PDF 다운로드 / 웹에서 바로 확인</p>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <Link 
-              href="/products" 
-              className="inline-block px-8 py-4 bg-cyan-500 text-white text-lg font-semibold rounded-xl hover:bg-cyan-600 transition-colors"
-            >
-              지금 내 리포트 만들기 →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 4. 상품 패키지 ========== */}
-      <section className="bg-white py-24 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              당신에게 맞는 분석을 선택하세요
-            </h2>
-            <p className="text-gray-600">
-              결제 후 즉시 생성 / PDF 제공 / 마이페이지 저장
-            </p>
-          </div>
-
-          {/* 상품 카드 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {products.map(product => (
               <ProductCard key={product.id} product={product} compact />
             ))}
           </div>
-
-          {/* 비교표 */}
-          <div className="bg-gray-50 rounded-2xl p-8">
-            <h3 className="text-xl font-bold text-center mb-8">패키지 비교</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-gray-200">
-                    <th className="text-left py-4 px-4">기능</th>
-                    <th className="text-center py-4 px-4">기본</th>
-                    <th className="text-center py-4 px-4 bg-cyan-50">프리미엄</th>
-                    <th className="text-center py-4 px-4">궁합 기본</th>
-                    <th className="text-center py-4 px-4">궁합 완전판</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">핵심 성향 분석</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">오행/십성 밸런스</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">MBTI × 사주 교차 분석</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">연애/궁합 분석</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="py-3 px-4">2026 액션 가이드</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50">✓</td>
-                    <td className="text-center py-3 px-4">-</td>
-                    <td className="text-center py-3 px-4">✓</td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 px-4 font-semibold">PDF 분량</td>
-                    <td className="text-center py-3 px-4">15p</td>
-                    <td className="text-center py-3 px-4 bg-cyan-50 font-semibold">30p</td>
-                    <td className="text-center py-3 px-4">7p</td>
-                    <td className="text-center py-3 px-4">19p</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* ========== 5. WHY K-SAJU ========== */}
-      <section className="bg-gray-900 py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm font-medium mb-4">
-              차별화 포인트
+      {/* ========== 4. AI vs K-Saju 비교 - 프리미엄 대비 ========== */}
+      <section className="py-28 px-4"
+        style={{ background: 'linear-gradient(135deg, #050810 0%, #0a1628 30%, #1a2744 50%, #0a1628 70%, #050810 100%)' }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-medium mb-5 border border-amber-500/30">
+              왜 다른가요?
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              왜 K-Saju Engine인가?
+            <h2 className="text-3xl md:text-4xl font-bold mb-5" style={{ color: '#F5F5F0' }}>
+              AI 프롬프트 vs K-Saju 엔진
             </h2>
-            <p className="text-lg text-gray-400">
-              프롬프트가 아니라, <span className="text-cyan-400">계산 엔진</span>입니다.<br />
-              같은 입력이면 같은 결과가 나옵니다.
+            <p className="text-lg" style={{ color: 'rgba(245, 245, 240, 0.6)' }}>
+              같은 사주 서비스라도 <span className="text-amber-400">결과의 신뢰도</span>가 다릅니다.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* 일반 AI 사주 */}
-            <div className="bg-gray-800 rounded-2xl p-8 border border-gray-700">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🤖</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gray-400">일반 AI 사주</h3>
-                  <p className="text-sm text-gray-500">GPT 기반 프롬프트</p>
-                </div>
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+            {/* AI Prompt - 어둡고 흐릿한 느낌 */}
+            <div className="rounded-2xl p-8 border border-white/5 relative overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 25, 0.9) 100%)' }}>
+              {/* 흐릿한 배경 효과 */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gray-500/20 rounded-full blur-3xl"></div>
               </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>매번 결과가 달라질 수 있음</span>
-                </li>
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>만세력/절기 계산 오류 가능</span>
-                </li>
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>근거 설명이 약함</span>
-                </li>
-                <li className="flex items-start gap-3 text-gray-400">
-                  <span className="text-red-400 mt-1">✗</span>
-                  <span>검증/재현이 어려움</span>
-                </li>
-              </ul>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-14 h-14 bg-gray-800/80 rounded-full flex items-center justify-center border border-gray-700/50">
+                    <span className="text-2xl opacity-60">☁️</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>AI 프롬프트 기반</h3>
+                    <p className="text-sm" style={{ color: 'rgba(245, 245, 240, 0.4)' }}>일반 서비스</p>
+                  </div>
+                </div>
+                <ul className="space-y-5">
+                  <li className="flex items-start gap-3" style={{ color: 'rgba(245, 245, 240, 0.5)' }}>
+                    <span className="w-5 h-5 rounded-full border border-dashed border-gray-600 flex items-center justify-center mt-0.5">
+                      <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
+                    </span>
+                    <span>매번 다른 결과 (비일관성)</span>
+                  </li>
+                  <li className="flex items-start gap-3" style={{ color: 'rgba(245, 245, 240, 0.5)' }}>
+                    <span className="w-5 h-5 rounded-full border border-dashed border-gray-600 flex items-center justify-center mt-0.5">
+                      <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
+                    </span>
+                    <span>모호한 해석, 검증 어려움</span>
+                  </li>
+                  <li className="flex items-start gap-3" style={{ color: 'rgba(245, 245, 240, 0.5)' }}>
+                    <span className="w-5 h-5 rounded-full border border-dashed border-gray-600 flex items-center justify-center mt-0.5">
+                      <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
+                    </span>
+                    <span>만세력 계산 오류 가능성</span>
+                  </li>
+                  <li className="flex items-start gap-3" style={{ color: 'rgba(245, 245, 240, 0.5)' }}>
+                    <span className="w-5 h-5 rounded-full border border-dashed border-gray-600 flex items-center justify-center mt-0.5">
+                      <span className="w-1.5 h-1.5 bg-gray-600 rounded-full"></span>
+                    </span>
+                    <span>추상적인 운세 문구</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            {/* K-Saju Engine */}
-            <div className="bg-gradient-to-br from-cyan-900/50 to-blue-900/50 rounded-2xl p-8 border-2 border-cyan-500 relative">
-              <div className="absolute top-4 right-4">
-                <span className="px-3 py-1 bg-cyan-500 text-white text-xs font-bold rounded-full">추천</span>
+            {/* K-Saju Engine - 황금나침반 배경 + 프리미엄 */}
+            <div className="rounded-2xl p-8 relative overflow-hidden group transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl"
+              style={{ 
+                background: 'linear-gradient(135deg, rgba(26, 39, 68, 0.95) 0%, rgba(36, 59, 97, 0.9) 100%)',
+                border: '2px solid rgba(212, 175, 55, 0.5)',
+                boxShadow: '0 0 40px rgba(212, 175, 55, 0.15)'
+              }}>
+              
+              {/* 황금나침반 배경 이미지 */}
+              <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500">
+                <img 
+                  src="/images/compass.png" 
+                  alt="" 
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-72 h-72 object-contain opacity-60"
+                  style={{ filter: 'saturate(1.2)' }}
+                />
               </div>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">⚡</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">K-Saju Engine</h3>
-                  <p className="text-sm text-cyan-400">정밀 계산 시스템</p>
-                </div>
+              
+              {/* 골드 글로우 효과 */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ boxShadow: 'inset 0 0 60px rgba(212, 175, 55, 0.1)' }}></div>
+              
+              {/* 추천 배지 */}
+              <div className="absolute top-4 right-4 z-20">
+                <span className="px-4 py-1.5 text-xs font-bold rounded-full shadow-lg"
+                  style={{ 
+                    background: 'linear-gradient(135deg, #d4af37 0%, #f4d03f 50%, #d4af37 100%)',
+                    color: '#0a0f1a'
+                  }}>
+                  추천
+                </span>
               </div>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>동일 입력 = 동일 결과 (일관성)</span>
-                </li>
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>절기 기반 정밀 만세력 계산</span>
-                </li>
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>패턴 매칭으로 구조화된 해석</span>
-                </li>
-                <li className="flex items-start gap-3 text-white">
-                  <span className="text-cyan-400 mt-1">✓</span>
-                  <span>MBTI 교차 검증으로 정확도 향상</span>
-                </li>
-              </ul>
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+                    style={{ 
+                      background: 'linear-gradient(135deg, #d4af37 0%, #b8960c 100%)',
+                      boxShadow: '0 0 20px rgba(212, 175, 55, 0.4)'
+                    }}>
+                    <span className="text-2xl">🧭</span>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold" style={{ color: '#F5F5F0' }}>K-Saju Engine</h3>
+                    <p className="text-sm font-medium" style={{ color: '#d4af37' }}>정밀 계산 시스템</p>
+                  </div>
+                </div>
+                <ul className="space-y-5">
+                  <li className="flex items-start gap-3" style={{ color: '#F5F5F0' }}>
+                    <span className="w-5 h-5 flex items-center justify-center mt-0.5">
+                      <span className="text-amber-400">◆</span>
+                    </span>
+                    <span><strong className="text-amber-300">100% 재현 가능</strong>한 일관성</span>
+                  </li>
+                  <li className="flex items-start gap-3" style={{ color: '#F5F5F0' }}>
+                    <span className="w-5 h-5 flex items-center justify-center mt-0.5">
+                      <span className="text-amber-400">◆</span>
+                    </span>
+                    <span>절기 기반 <strong className="text-amber-300">정밀 만세력</strong> 계산</span>
+                  </li>
+                  <li className="flex items-start gap-3" style={{ color: '#F5F5F0' }}>
+                    <span className="w-5 h-5 flex items-center justify-center mt-0.5">
+                      <span className="text-amber-400">◆</span>
+                    </span>
+                    <span><strong className="text-amber-300">구조적 알고리즘</strong>으로 해석</span>
+                  </li>
+                  <li className="flex items-start gap-3" style={{ color: '#F5F5F0' }}>
+                    <span className="w-5 h-5 flex items-center justify-center mt-0.5">
+                      <span className="text-amber-400">◆</span>
+                    </span>
+                    <span>MBTI <strong className="text-amber-300">교차 검증</strong>으로 정확도 향상</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ========== 6. 유즈케이스 ========== */}
-      <section className="bg-white py-24 px-4">
+      {/* ========== 5. 유즈케이스 ========== */}
+      <UseCasesSection />
+
+      {/* ========== 6. 후기 - 프리미엄 다크 ========== */}
+      <section className="py-28 px-4"
+        style={{ background: 'linear-gradient(180deg, #050810 0%, #0a1628 50%, #050810 100%)' }}>
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              이럴 때 가장 쓸모 있습니다
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* 연애/관계 */}
-            <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl p-8 border border-pink-100">
-              <div className="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">💕</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">연애 · 관계</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span>갈등이 반복되는 이유</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span>상대와 맞추는 포인트</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-pink-500">•</span>
-                  <span>피해야 할 대화 패턴</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* 커리어 */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
-              <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">💼</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">커리어 · 의사결정</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500">•</span>
-                  <span>내 강점이 먹히는 환경</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500">•</span>
-                  <span>이직/도전 타이밍</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-500">•</span>
-                  <span>번아웃 위험 신호</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* 돈/사업 */}
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl p-8 border border-emerald-100">
-              <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl">💰</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">돈 · 사업</h3>
-              <ul className="space-y-3 text-gray-600">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500">•</span>
-                  <span>리스크가 커지는 시기</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500">•</span>
-                  <span>확장/정리 타이밍</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-500">•</span>
-                  <span>현금흐름 관리 포인트</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="text-center mt-12">
-            <Link 
-              href="/products" 
-              className="inline-block px-8 py-4 bg-gray-900 text-white text-lg font-semibold rounded-xl hover:bg-gray-800 transition-colors"
-            >
-              내 케이스로 바로 분석하기 →
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== 7. 후기 ========== */}
-      <section className="bg-gray-50 py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-medium mb-5 border border-amber-500/30">
+              실제 후기
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-5" style={{ color: '#F5F5F0' }}>
               먼저 써본 사람들이 말합니다
             </h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {reviews.map((review, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-6 shadow-lg">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <span key={i} className="text-yellow-400">★</span>
-                  ))}
+              <div key={idx} 
+                className="relative group rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(212, 175, 55, 0.15)',
+                  boxShadow: '0 0 30px rgba(212, 175, 55, 0.03)'
+                }}>
+                {/* 글로우 효과 */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ boxShadow: 'inset 0 0 40px rgba(212, 175, 55, 0.05)' }}></div>
+                
+                <div className="relative z-10">
+                  <div className="flex gap-1 mb-5">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <span key={i} className="text-amber-400 text-lg">★</span>
+                    ))}
+                  </div>
+                  <p className="mb-5 leading-relaxed text-lg" style={{ color: '#F5F5F0' }}>{review.text}</p>
+                  <p className="text-sm" style={{ color: 'rgba(245, 245, 240, 0.5)' }}>{review.author}</p>
                 </div>
-                <p className="text-gray-700 mb-4 leading-relaxed">{review.text}</p>
-                <p className="text-sm text-gray-500">{review.author}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ========== 8. 신뢰 블록 ========== */}
-      <section className="bg-white py-24 px-4">
+      {/* ========== 7. 신뢰 블록 - 프리미엄 다크 ========== */}
+      <section className="py-28 px-4"
+        style={{ background: 'linear-gradient(180deg, #0a1628 0%, #0d1a2d 50%, #0a1628 100%)' }}>
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-medium mb-5 border border-amber-500/30">
+              신뢰 & 안전
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-5" style={{ color: '#F5F5F0' }}>
               신뢰가 먼저입니다
             </h2>
+            <p className="text-lg" style={{ color: 'rgba(245, 245, 240, 0.6)' }}>
+              안전하게 분석받고, 안심하고 결제하세요
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 bg-gray-50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">🔒</span>
+            {/* 개인정보 보호 */}
+            <div className="relative group rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2"
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(192, 192, 192, 0.2)',
+                boxShadow: '0 0 40px rgba(100, 150, 255, 0.05)'
+              }}>
+              {/* 글로우 효과 */}
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ boxShadow: 'inset 0 0 40px rgba(100, 150, 255, 0.1)' }}></div>
+              
+              <div className="relative z-10 text-center">
+                <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-8"
+                  style={{ 
+                    background: 'linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(192, 192, 192, 0.05) 100%)',
+                    border: '2px solid rgba(192, 192, 192, 0.3)',
+                    boxShadow: '0 0 30px rgba(192, 192, 192, 0.1)'
+                  }}>
+                  <span className="text-4xl">🛡️</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4" style={{ color: '#F5F5F0' }}>개인정보 보호</h3>
+                <div className="space-y-2" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#C0C0C0' }}>◆</span>
+                    <span>256비트 암호화 전송</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#C0C0C0' }}>◆</span>
+                    <span>Zero-Log 정책 (즉시 파기)</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#C0C0C0' }}>◆</span>
+                    <span>분석 목적 외 사용 없음</span>
+                  </p>
+                </div>
               </div>
-              <h3 className="text-lg font-bold mb-3">개인정보 보호</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                입력 데이터는 최소 수집<br />
-                언제든 삭제 가능<br />
-                분석 목적 외 사용 없음
-              </p>
             </div>
 
-            <div className="text-center p-8 bg-gray-50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">💳</span>
+            {/* 안전 결제 · 환불 */}
+            <div className="relative group rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2"
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+                boxShadow: '0 0 40px rgba(212, 175, 55, 0.05)'
+              }}>
+              {/* 글로우 효과 */}
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ boxShadow: 'inset 0 0 40px rgba(212, 175, 55, 0.1)' }}></div>
+              
+              <div className="relative z-10 text-center">
+                <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-8"
+                  style={{ 
+                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%)',
+                    border: '2px solid rgba(212, 175, 55, 0.4)',
+                    boxShadow: '0 0 30px rgba(212, 175, 55, 0.15)'
+                  }}>
+                  <span className="text-4xl">💎</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4" style={{ color: '#F5F5F0' }}>안전 결제 · 환불</h3>
+                <div className="space-y-2" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#d4af37' }}>◆</span>
+                    <span>국내 PG사 안전 거래</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#d4af37' }}>◆</span>
+                    <span>불만족 시 100% 환불</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#d4af37' }}>◆</span>
+                    <span>No-Risk 만족 보장</span>
+                  </p>
+                </div>
               </div>
-              <h3 className="text-lg font-bold mb-3">안전 결제 · 환불</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                결제는 PG사 안전결제<br />
-                환불 기준 명확히 공개<br />
-                만족 보장 정책
-              </p>
             </div>
 
-            <div className="text-center p-8 bg-gray-50 rounded-2xl">
-              <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-6">
-                <span className="text-3xl">📊</span>
+            {/* 계산 근거 */}
+            <div className="relative group rounded-2xl p-8 transition-all duration-500 hover:-translate-y-2"
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(100, 200, 150, 0.2)',
+                boxShadow: '0 0 40px rgba(100, 200, 150, 0.05)'
+              }}>
+              {/* 글로우 효과 */}
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ boxShadow: 'inset 0 0 40px rgba(100, 200, 150, 0.1)' }}></div>
+              
+              <div className="relative z-10 text-center">
+                <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-8"
+                  style={{ 
+                    background: 'linear-gradient(135deg, rgba(100, 200, 150, 0.1) 0%, rgba(100, 200, 150, 0.05) 100%)',
+                    border: '2px solid rgba(100, 200, 150, 0.3)',
+                    boxShadow: '0 0 30px rgba(100, 200, 150, 0.1)'
+                  }}>
+                  <span className="text-4xl">🧭</span>
+                </div>
+                <h3 className="text-xl font-bold mb-4" style={{ color: '#F5F5F0' }}>계산 근거</h3>
+                <div className="space-y-2" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#64c896' }}>◆</span>
+                    <span>절기 · 만세력 정밀 계산</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#64c896' }}>◆</span>
+                    <span>20년 경력 전문가 검수</span>
+                  </p>
+                  <p className="flex items-center justify-center gap-2">
+                    <span style={{ color: '#64c896' }}>◆</span>
+                    <span>100% 자체 엔진 로직</span>
+                  </p>
+                </div>
               </div>
-              <h3 className="text-lg font-bold mb-3">계산 근거</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                절기 · 만세력 계산 로직 기반<br />
-                20년+ 전문가 감수<br />
-                100% 자체 엔진 로직 해석
-              </p>
             </div>
+          </div>
+
+          {/* 하단 보증 문구 */}
+          <div className="text-center mt-12 pt-8 border-t border-white/5">
+            <p className="text-sm" style={{ color: 'rgba(245, 245, 240, 0.4)' }}>
+              우리는 당신의 운명을 소중히 다루며, 개인정보를 상업적으로 이용하지 않습니다.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ========== 9. FAQ ========== */}
-      <section className="bg-gray-50 py-24 px-4">
+      {/* ========== 8. FAQ - 프리미엄 다크 ========== */}
+      <section className="py-28 px-4"
+        style={{ background: 'linear-gradient(180deg, #050810 0%, #0a1628 50%, #050810 100%)' }}>
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-medium mb-5 border border-amber-500/30">
+              FAQ
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-5" style={{ color: '#F5F5F0' }}>
               자주 묻는 질문
             </h2>
           </div>
 
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div key={idx} 
+                className="rounded-2xl overflow-hidden transition-all duration-300"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)'
+                }}>
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full px-6 py-5 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                  className="w-full px-8 py-6 text-left flex justify-between items-center transition-colors"
+                  style={{ background: openFaq === idx ? 'rgba(212, 175, 55, 0.05)' : 'transparent' }}
                 >
-                  <span className="font-semibold text-gray-900">{faq.q}</span>
-                  <span className={`text-2xl transition-transform ${openFaq === idx ? 'rotate-45' : ''}`}>+</span>
+                  <span className="font-semibold text-lg" style={{ color: '#F5F5F0' }}>{faq.q}</span>
+                  <span className={`text-2xl transition-transform ${openFaq === idx ? 'rotate-45' : ''}`} style={{ color: '#d4af37' }}>+</span>
                 </button>
                 {openFaq === idx && (
-                  <div className="px-6 pb-5 text-gray-600 leading-relaxed">
+                  <div className="px-8 pb-6 leading-relaxed" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
                     {faq.a}
                   </div>
                 )}
@@ -685,25 +718,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ========== 10. FINAL CTA ========== */}
-      <section className="bg-gradient-to-r from-cyan-600 to-blue-600 py-20 px-4">
+      {/* ========== 9. FINAL CTA - 프리미엄 네이비+골드 ========== */}
+      <section className="py-24 px-4"
+        style={{ background: 'linear-gradient(135deg, #0a0f1a 0%, #1a2744 50%, #243b61 100%)' }}>
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            지금, 내 리포트를 받아보세요.
+          <span className="inline-block px-4 py-1.5 bg-amber-500/10 text-amber-400 rounded-full text-sm font-medium mb-6 border border-amber-500/30">
+            지금 시작하세요
+          </span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{ color: '#F5F5F0' }}>
+            감이 아닌 구조로 읽어내는<br />진정한 나를 만나보세요.
           </h2>
-          <p className="text-xl text-white/80 mb-8">
+          <p className="text-xl mb-10" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
             무료 1페이지로 먼저 확인하고, 필요하면 전체 리포트로 확장하세요.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-5 justify-center">
             <Link 
-              href="/solo.html" 
-              className="px-8 py-4 bg-white text-cyan-600 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg"
+              href="/free"
+              className="px-10 py-4 bg-white text-gray-900 text-lg font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               무료 체험하기
             </Link>
             <Link 
               href="/products" 
-              className="px-8 py-4 bg-cyan-700 text-white text-lg font-bold rounded-xl hover:bg-cyan-800 transition-all border-2 border-white/30"
+              className="px-10 py-4 text-lg font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 border-2"
+              style={{ 
+                background: 'linear-gradient(135deg, #d4af37 0%, #b8960c 100%)',
+                borderColor: '#d4af37',
+                color: '#0a0f1a'
+              }}
             >
               프리미엄 분석 →
             </Link>
@@ -712,21 +754,25 @@ export default function Home() {
       </section>
 
       {/* ========== STICKY CTA BAR ========== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 px-4 z-50 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 py-3 px-4 z-50 shadow-lg">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <span className="text-sm text-gray-600 hidden sm:block">
             무료로 먼저 체험해 보세요
           </span>
           <div className="flex gap-3 w-full sm:w-auto">
             <Link 
-              href="/solo.html" 
+              href="/free" 
               className="flex-1 sm:flex-none px-6 py-3 bg-gray-100 text-gray-800 font-semibold rounded-lg hover:bg-gray-200 transition-colors text-center"
             >
               무료 체험
             </Link>
             <Link 
               href="/products" 
-              className="flex-1 sm:flex-none px-6 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-colors text-center"
+              className="flex-1 sm:flex-none px-6 py-3 font-semibold rounded-lg transition-colors text-center"
+              style={{ 
+                background: 'linear-gradient(135deg, #d4af37 0%, #b8960c 100%)',
+                color: '#0a0f1a'
+              }}
             >
               프리미엄
             </Link>

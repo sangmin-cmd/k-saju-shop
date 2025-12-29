@@ -53,7 +53,7 @@ const reviews = [
     id: 6,
     name: '한**',
     product: 'K-Saju 기본',
-    rating: 4,
+    rating: 5,
     date: '2024.12.14',
     content: '재미로 해봤는데 생각보다 잘 맞아서 놀랐어요. 친구들한테도 추천했습니다.',
     verified: true

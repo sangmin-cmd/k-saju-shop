@@ -3,9 +3,9 @@ import { Product } from './types';
 export const products: Product[] = [
   {
     id: 'basic',
-    name: 'K-Saju 베이직',
+    name: '정통 사주 분석',
     description: '정통 사주팔자 분석으로 나를 알아가는 첫걸음',
-    price: 5900,
+    price: 9900,
     features: [
       '사주팔자 완전 분석',
       '오행 분포 & 균형 진단',
@@ -22,7 +22,7 @@ export const products: Product[] = [
   },
   {
     id: 'cross',
-    name: 'K-Saju 크로스',
+    name: '정통사주 × MBTI 분석',
     description: '사주 × MBTI 융합! 동서양 분석의 만남',
     price: 14900,
     originalPrice: 19900,
@@ -44,10 +44,10 @@ export const products: Product[] = [
   },
   {
     id: 'fatemate',
-    name: 'FateMate 프리미엄',
+    name: '연인 궁합 스페셜 분석',
     description: '두 사람의 운명적 궁합 심층 분석',
-    price: 19900,
-    originalPrice: 29900,
+    price: 14900,
+    originalPrice: 19900,
     features: [
       '사주 궁합 종합 점수',
       'MBTI 궁합 & 소통 스타일',
@@ -61,7 +61,7 @@ export const products: Product[] = [
     category: 'compatibility',
     image: '/images/fatemate.png',
     icon: '💫',
-    badge: '33% 할인',
+    badge: '25% 할인',
     popular: true
   }
 ];

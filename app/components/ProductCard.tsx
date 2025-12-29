@@ -60,10 +60,12 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
           </div>
         )}
         
-        {/* 메인 아이콘 */}
-        <div className="text-6xl drop-shadow-lg">
-          {getIcon()}
-        </div>
+        {/* 상품 이미지 */}
+<img 
+  src={product.image} 
+  alt={product.name}
+  className="w-24 h-24 object-cover rounded-lg shadow-lg"
+/>
         
         {/* 골드 장식 요소 */}
         <div className="absolute top-3 right-4 text-amber-400/60 text-lg">✦</div>
