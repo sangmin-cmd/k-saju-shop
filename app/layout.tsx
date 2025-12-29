@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     siteName: 'K-Saju',
     images: [
       {
-        url: '/images/og-image.jpg',
+        url: 'https://www.sajutype.kr/images/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'K-Saju - 정밀 계산 엔진 × MBTI 분석',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'K-Saju - 정밀 계산 엔진 × MBTI 분석',
     description: '감이 아닌 구조로 해석하는 프리미엄 사주 분석 서비스',
-    images: ['/images/og-image.jpg'],
+    images: ['https://www.sajutype.kr/images/og-image.jpg'],
   },
 }
 
