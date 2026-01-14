@@ -1,0 +1,29 @@
+0000000000000000000000000000000000000000 a5b2c41858b12b3cf4e50e96fa9c5f7c7e498c01 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766662811 +0900	commit (initial): K-Saju 배포
+a5b2c41858b12b3cf4e50e96fa9c5f7c7e498c01 a5b2c41858b12b3cf4e50e96fa9c5f7c7e498c01 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766662825 +0900	Branch: renamed refs/heads/master to refs/heads/main
+a5b2c41858b12b3cf4e50e96fa9c5f7c7e498c01 b15d656f826bf55f1a54cf65b597e759c3eaa453 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766703338 +0900	commit: 경로 수정
+b15d656f826bf55f1a54cf65b597e759c3eaa453 8d5b73032b73fd095e03710bb2fe8192f1af3a4d LEE SANGMIN <gangnam.moneytree@gmail.com> 1766704206 +0900	commit: checkout 수정
+8d5b73032b73fd095e03710bb2fe8192f1af3a4d 5cfc437d2228536d3c55801e30d79326a374fcec LEE SANGMIN <gangnam.moneytree@gmail.com> 1766704453 +0900	commit: order 경로 수정
+5cfc437d2228536d3c55801e30d79326a374fcec d7882ce1ea8b06bda84a03ba9e58ab22306e6b6e LEE SANGMIN <gangnam.moneytree@gmail.com> 1766704731 +0900	commit: 빌드 설정 수정
+d7882ce1ea8b06bda84a03ba9e58ab22306e6b6e 6c8637b76beb0778ec2937edc4bf3328b6d2aad9 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766704956 +0900	commit: 이메일 임시 비활성화
+6c8637b76beb0778ec2937edc4bf3328b6d2aad9 54489b19deda6ffa28d4b947ccd2a8b5b1a266fc LEE SANGMIN <gangnam.moneytree@gmail.com> 1766707588 +0900	commit: 푸터 사업자정보 추가
+54489b19deda6ffa28d4b947ccd2a8b5b1a266fc 30ffaa9da6c34139f8837c0cda34d4069e830777 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766707991 +0900	commit: 푸터 및 환불정책 업데이트
+30ffaa9da6c34139f8837c0cda34d4069e830777 a5ec7f31289346ea225b4bf5ac2925de9655c240 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766708436 +0900	commit: 이메일 및 연락처 수정
+a5ec7f31289346ea225b4bf5ac2925de9655c240 d5f9360e4fbf88c5d992148c39b6162690e7e353 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766711636 +0900	commit: 토스 결제 연동
+d5f9360e4fbf88c5d992148c39b6162690e7e353 e7472f073fdb696ddee48ef30c83b94ef0364811 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766713415 +0900	commit: 이메일 수정 및 소개/후기/FAQ 페이지 추가
+e7472f073fdb696ddee48ef30c83b94ef0364811 785968a677a294dc324eb718cdc561491763c570 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766713689 +0900	commit: 토스 실제 키 적용
+785968a677a294dc324eb718cdc561491763c570 c413ceb14cf7353a735f8c57b769e560b83e5b43 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766715247 +0900	commit: 토스 결제 에러 수정
+c413ceb14cf7353a735f8c57b769e560b83e5b43 fe057f16f7e6f7e56112803e084bce2677536196 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766716452 +0900	commit: 토스 일반결제 키 적용
+fe057f16f7e6f7e56112803e084bce2677536196 899e6c95685e4445fc166dd7d84d25f60c5a1ca6 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766783909 +0900	commit: 사업자 정보 수정
+899e6c95685e4445fc166dd7d84d25f60c5a1ca6 09301df1b523c196c38e8455fcaf2a125980bd97 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766785648 +0900	commit: 디버그 박스 제거, 후기 페이지 추가
+09301df1b523c196c38e8455fcaf2a125980bd97 d12987cbfdfce290f30639de872ad3cf9f837c61 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766786945 +0900	commit: 무료 체험 페이지 추가 (/free)
+d12987cbfdfce290f30639de872ad3cf9f837c61 bd23704319dad1a362147f97e5389fe95ad17577 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766787428 +0900	commit: 무료 체험 페이지 추가
+bd23704319dad1a362147f97e5389fe95ad17577 df73e94baed9a80861bf958d2d0849ddcf59a158 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766787920 +0900	commit: 사주 계산 로직 수정
+df73e94baed9a80861bf958d2d0849ddcf59a158 50ba1ed86b96c385ca496a3a86ac5392023b92d4 LEE SANGMIN <gangnam.moneytree@gmail.com> 1766789519 +0900	commit: 상품 구조 개편 + 네이비/골드 테마
+50ba1ed86b96c385ca496a3a86ac5392023b92d4 4f538b8c0a5325e2fe2fb33b18aa6a452d922e7d LEE SANGMIN <gangnam.moneytree@gmail.com> 1766789872 +0900	commit: 상품 상세 페이지 네이비/골드 테마 적용
+4f538b8c0a5325e2fe2fb33b18aa6a452d922e7d 989c5ae7626bcec73ba3b9073cacc5cefeaedb1d LEE SANGMIN <gangnam.moneytree@gmail.com> 1766799945 +0900	commit: 상품 페이지 네이비/골드 테마
+989c5ae7626bcec73ba3b9073cacc5cefeaedb1d 459cc86361fc66d080ad58285c11d0117801bc76 LEE SANGMIN <gangnam.moneytree@gmail.com> 1767000616 +0900	commit: 프리미엄 디자인 업데이트
+459cc86361fc66d080ad58285c11d0117801bc76 6ca4e025ff40e6f95ad7348646ef63385a78d0f2 LEE SANGMIN <gangnam.moneytree@gmail.com> 1767001274 +0900	commit: 메타데이터 업데이트
+6ca4e025ff40e6f95ad7348646ef63385a78d0f2 671faaadae2dd0e047b6d270403f9db9c883d620 LEE SANGMIN <gangnam.moneytree@gmail.com> 1767001815 +0900	commit: OG 이미지 추가
+671faaadae2dd0e047b6d270403f9db9c883d620 3ed985195d3d23ce851a310a728f4779600d4ff3 LEE SANGMIN <gangnam.moneytree@gmail.com> 1767002599 +0900	commit: OG 이미지 경로 수정
+3ed985195d3d23ce851a310a728f4779600d4ff3 4e122610071685942c4b8d27ac487da01af4e3bd LEE SANGMIN <gangnam.moneytree@gmail.com> 1768368637 +0900	commit: 사업자명 및 이메일 변경
+4e122610071685942c4b8d27ac487da01af4e3bd 222e43d43e57a5519a3a54c45295dd99660a378a LEE SANGMIN <gangnam.moneytree@gmail.com> 1768369166 +0900	commit: 이메일 변경
