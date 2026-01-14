@@ -7,6 +7,7 @@ import Link from 'next/link';
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
   const [orderInfo, setOrderInfo] = useState<any>(null);
+  const [notificationSent, setNotificationSent] = useState(false);
 
   const orderId = searchParams.get('orderId');
   const amount = searchParams.get('amount');
@@ -16,11 +17,46 @@ export default function PaymentSuccessPage() {
     // 로컬스토리지에서 주문 정보 가져오기
     const pendingOrder = localStorage.getItem('pendingOrder');
     if (pendingOrder) {
-      setOrderInfo(JSON.parse(pendingOrder));
+      const order = JSON.parse(pendingOrder);
+      setOrderInfo(order);
+      
+      // 관리자에게 알림 이메일 발송 (한 번만)
+      if (!notificationSent && orderId && amount) {
+        sendAdminNotification(order);
+      }
+      
       // 주문 완료 후 로컬스토리지 클리어
       localStorage.removeItem('pendingOrder');
     }
-  }, []);
+  }, [orderId, amount, notificationSent]);
+
+  // 관리자 알림 발송 함수
+  const sendAdminNotification = async (order: any) => {
+    try {
+      const response = await fetch('/api/admin-notify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderId,
+          amount,
+          customerName: order?.customerName || '',
+          customerEmail: order?.customerEmail || '',
+          customerPhone: order?.customerPhone || '',
+          products: order?.items || [],
+        }),
+      });
+      
+      if (response.ok) {
+        setNotificationSent(true);
+        console.log('관리자 알림 발송 완료');
+      }
+    } catch (error) {
+      console.error('관리자 알림 발송 실패:', error);
+      // 알림 실패해도 고객 화면에는 영향 없음
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
@@ -63,23 +99,23 @@ export default function PaymentSuccessPage() {
 
         {/* 안내 메시지 */}
         <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
-          <h3 className="font-semibold text-blue-700 mb-2">📧 결과물 안내</h3>
+          <h3 className="font-semibold text-blue-700 mb-2">📋 결과물 안내</h3>
           <p className="text-sm text-blue-600">
             입력하신 이메일로 <strong>24시간 이내</strong>에 분석 결과물이 발송됩니다.
             <br /><br />
-            스팸함도 확인해 주세요!
+            스팸함도 확인해 주세요.
           </p>
         </div>
 
         {/* 버튼 */}
         <div className="space-y-3">
-          <Link 
+          <Link
             href="/"
             className="block w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             홈으로 돌아가기
           </Link>
-          <Link 
+          <Link
             href="/products"
             className="block w-full py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
           >
@@ -89,7 +125,7 @@ export default function PaymentSuccessPage() {
 
         {/* 고객센터 안내 */}
         <p className="mt-6 text-xs text-gray-500">
-          결과물 문의: 010-2806-2497 | amoretto75@naver.com
+          결과물 문의: 010-2806-2497 | fatemate2026@gmail.com
         </p>
       </div>
     </div>
