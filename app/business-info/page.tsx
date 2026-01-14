@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 
 export default function BusinessInfoPage() {
   return (
@@ -10,8 +9,7 @@ export default function BusinessInfoPage() {
       <div className="bg-white border-b">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <Link href="/" className="inline-flex items-center text-gray-600 hover:text-gray-900">
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            홈으로 돌아가기
+                       홈으로 돌아가기
           </Link>
         </div>
       </div>
