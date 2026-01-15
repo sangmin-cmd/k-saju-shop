@@ -2,6 +2,7 @@
 
 import { useCart } from '../components/CartProvider';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 export default function CartPage() {
@@ -35,17 +36,19 @@ export default function CartPage() {
               <div key={item.product.id} className="card p-6">
                 <div className="flex items-start gap-6">
                   {/* 상품 이미지 */}
-                  <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-3xl">
-                      {item.product.category === 'basic' && '📊'}
-                      {item.product.category === 'premium' && '⭐'}
-                      {item.product.category === 'compatibility' && '💕'}
-                    </span>
+                  <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                    <Image
+                      src={item.product.image}
+                      alt={item.product.name}
+                      width={96}
+                      height={96}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   {/* 상품 정보 */}
                   <div className="flex-1">
-                    <Link 
+                    <Link
                       href={`/products/${item.product.id}`}
                       className="text-lg font-bold hover:text-primary-500 transition-colors"
                     >
@@ -85,7 +88,7 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  {/* 합계 */}
+                  {/* 소계 */}
                   <div className="text-right">
                     <div className="text-lg font-bold">
                       {(item.product.price * item.quantity).toLocaleString()}원
