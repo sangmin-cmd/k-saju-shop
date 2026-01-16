@@ -40,7 +40,7 @@ export const products: Product[] = [
     category: 'premium',
     image: '/images/cross.png',
     icon: '🧬',
-    badge: '베스트',
+    badge: '50% 할인',
     popular: true
   },
   {
@@ -62,7 +62,7 @@ export const products: Product[] = [
     category: 'compatibility',
     image: '/images/fatemate.png',
     icon: '💫',
-    badge: '50% 할인',
+    badge: '베스트',
     popular: true
   }
 ];
