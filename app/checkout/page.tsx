@@ -19,7 +19,9 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [isSDKReady, setIsSDKReady] = useState(false);
   const [sdkError, setSdkError] = useState<string | null>(null);
-  
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer'>('transfer');
+  const [isProcessing, setIsProcessing] = useState(false);
+
   const [formData, setFormData] = useState({
     customerName: '',
     customerEmail: '',
@@ -53,17 +55,15 @@ export default function CheckoutPage() {
         setSdkError(null);
       }
     };
-    
-    // 이미 로드되어 있는지 확인
+
     checkSDK();
-    
-    // 3초 후에도 로드 안 되면 에러
+
     const timeout = setTimeout(() => {
       if (!window.TossPayments) {
         setSdkError('결제 모듈 로딩 실패. 페이지를 새로고침해주세요.');
       }
     }, 5000);
-    
+
     return () => clearTimeout(timeout);
   }, []);
 
@@ -115,36 +115,81 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handlePayment = async () => {
-    console.log('=== 결제 시작 ===');
-    console.log('isSDKReady:', isSDKReady);
-    console.log('window.TossPayments:', typeof window.TossPayments);
-    
+  // 계좌이체 주문 처리
+  const handleTransferOrder = async () => {
     if (!validate()) {
       alert('입력 정보를 확인해주세요');
       return;
     }
 
-    // SDK 체크
-    if (!window.TossPayments) {
-      alert('결제 모듈이 로드되지 않았습니다. 페이지를 새로고침해주세요.');
-      console.error('TossPayments SDK not loaded');
+    setIsProcessing(true);
+
+    try {
+      const orderId = `TRANSFER-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // 주문 정보 저장
+      const orderData = {
+        orderId,
+        paymentMethod: 'transfer',
+        customerName: formData.customerName,
+        customerEmail: formData.customerEmail,
+        customerPhone: formData.customerPhone,
+        items,
+        totalAmount,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem('transferOrder', JSON.stringify(orderData));
+
+      // 관리자에게 이메일 알림
+      try {
+        await fetch('/api/send-order-notification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...orderData,
+            paymentType: 'bank_transfer',
+          }),
+        });
+      } catch (e) {
+        console.log('알림 전송 실패 (무시됨)');
+      }
+
+      // 주문 완료 페이지로 이동
+      router.push('/payment/transfer-complete');
+      
+    } catch (error) {
+      console.error('주문 처리 오류:', error);
+      alert('주문 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // 카드 결제 처리
+  const handleCardPayment = async () => {
+    console.log('=== 결제 시작 ===');
+
+    if (!validate()) {
+      alert('입력 정보를 확인해주세요');
       return;
     }
 
+    if (!window.TossPayments) {
+      alert('결제 모듈이 로드되지 않았습니다. 페이지를 새로고침해주세요.');
+      return;
+    }
+
+    setIsProcessing(true);
+
     try {
-      console.log('TossPayments 초기화 시도...');
       const tossPayments = window.TossPayments(clientKey);
-      console.log('TossPayments 초기화 성공:', tossPayments);
-      
       const orderId = `ORDER-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const orderName = items.length === 1 
+      const orderName = items.length === 1
         ? items[0].product.name
         : `${items[0].product.name} 외 ${items.length - 1}건`;
 
-      console.log('주문 정보:', { orderId, orderName, amount: totalAmount });
-
-      // 주문 정보를 로컬스토리지에 임시 저장
       localStorage.setItem('pendingOrder', JSON.stringify({
         orderId,
         customerName: formData.customerName,
@@ -154,7 +199,7 @@ export default function CheckoutPage() {
         totalAmount,
       }));
 
-      const paymentParams = {
+      await tossPayments.requestPayment('카드', {
         amount: totalAmount,
         orderId: orderId,
         orderName: orderName,
@@ -162,26 +207,23 @@ export default function CheckoutPage() {
         customerEmail: formData.customerEmail,
         successUrl: `${window.location.origin}/payment/success`,
         failUrl: `${window.location.origin}/payment/fail`,
-      };
-      
-      console.log('결제 파라미터:', paymentParams);
-
-      // 토스페이먼츠 결제창 호출
-      await tossPayments.requestPayment('카드', paymentParams);
+      });
 
     } catch (error: any) {
-      console.error('=== 결제 에러 ===');
-      console.error('Error object:', error);
-      console.error('Error code:', error?.code);
-      console.error('Error message:', error?.message);
-      
-      if (error?.code === 'USER_CANCEL') {
-        console.log('사용자가 결제를 취소했습니다.');
-      } else if (error?.code === 'INVALID_CLIENT_KEY') {
-        alert('결제 모듈 설정 오류입니다. 관리자에게 문의해주세요.');
-      } else {
-        alert(`결제 중 오류가 발생했습니다.\n\n오류 코드: ${error?.code || 'UNKNOWN'}\n오류 메시지: ${error?.message || '알 수 없는 오류'}\n\n다시 시도해주세요.`);
+      console.error('결제 오류:', error);
+      if (error?.code !== 'USER_CANCEL') {
+        alert(`결제 중 오류가 발생했습니다.\n오류: ${error?.message || '알 수 없는 오류'}`);
       }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePayment = () => {
+    if (paymentMethod === 'transfer') {
+      handleTransferOrder();
+    } else {
+      handleCardPayment();
     }
   };
 
@@ -191,7 +233,6 @@ export default function CheckoutPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-    // 입력 시 해당 필드 에러 클리어
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -204,18 +245,12 @@ export default function CheckoutPage() {
         src="https://js.tosspayments.com/v1/payment"
         strategy="afterInteractive"
         onLoad={() => {
-          console.log('Toss SDK Script loaded');
           if (window.TossPayments) {
-            console.log('TossPayments is available');
             setIsSDKReady(true);
             setSdkError(null);
-          } else {
-            console.error('TossPayments not found after script load');
-            setSdkError('결제 모듈 초기화 실패');
           }
         }}
-        onError={(e) => {
-          console.error('Toss SDK Script load error:', e);
+        onError={() => {
           setSdkError('결제 모듈 로딩 실패. 인터넷 연결을 확인해주세요.');
         }}
       />
@@ -224,14 +259,10 @@ export default function CheckoutPage() {
         <div className="max-w-6xl mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">주문/결제</h1>
 
-          {/* SDK 에러 표시 */}
-          {sdkError && (
+          {sdkError && paymentMethod === 'card' && (
             <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
               ⚠️ {sdkError}
-              <button 
-                onClick={() => window.location.reload()} 
-                className="ml-4 underline"
-              >
+              <button onClick={() => window.location.reload()} className="ml-4 underline">
                 새로고침
               </button>
             </div>
@@ -246,7 +277,7 @@ export default function CheckoutPage() {
                   {items.map((item, index) => (
                     <div key={index} className="flex items-center gap-4 pb-4 border-b last:border-b-0">
                       <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
-                        <span className="text-2xl">📊</span>
+                        <span className="text-2xl">⭐</span>
                       </div>
                       <div className="flex-1">
                         <h3 className="font-semibold">{item.product.name}</h3>
@@ -307,6 +338,54 @@ export default function CheckoutPage() {
                       <p className="text-red-500 text-sm mt-1">{errors.customerPhone}</p>
                     )}
                   </div>
+                </div>
+              </div>
+
+              {/* 결제 방법 선택 */}
+              <div className="card p-6 bg-white rounded-xl shadow-md">
+                <h2 className="text-xl font-bold mb-4">결제 방법</h2>
+                <div className="space-y-3">
+                  <label className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    paymentMethod === 'transfer' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="transfer"
+                      checked={paymentMethod === 'transfer'}
+                      onChange={() => setPaymentMethod('transfer')}
+                      className="w-5 h-5 text-blue-600"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🏦</span>
+                        <span className="font-semibold">계좌이체 (무통장입금)</span>
+                        <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded">추천</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">주문 후 계좌번호 안내 → 입금 확인 후 서비스 제공</p>
+                    </div>
+                  </label>
+
+                  <label className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    paymentMethod === 'card' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="card"
+                      checked={paymentMethod === 'card'}
+                      onChange={() => setPaymentMethod('card')}
+                      className="w-5 h-5 text-blue-600"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">💳</span>
+                        <span className="font-semibold">카드결제</span>
+                        <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">준비중</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">신용카드 / 체크카드 (토스페이먼츠)</p>
+                    </div>
+                  </label>
                 </div>
               </div>
 
@@ -375,25 +454,40 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={handlePayment}
-                  disabled={!isSDKReady}
+                  disabled={isProcessing || (paymentMethod === 'card' && !isSDKReady)}
                   className={`w-full py-4 text-lg font-bold rounded-lg transition-all ${
-                    isSDKReady 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    isProcessing || (paymentMethod === 'card' && !isSDKReady)
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
-                  {isSDKReady ? `${totalAmount.toLocaleString()}원 결제하기` : '결제 모듈 로딩중...'}
+                  {isProcessing 
+                    ? '처리중...' 
+                    : paymentMethod === 'transfer'
+                      ? `${totalAmount.toLocaleString()}원 주문하기`
+                      : isSDKReady 
+                        ? `${totalAmount.toLocaleString()}원 결제하기` 
+                        : '결제 모듈 로딩중...'}
                 </button>
+
+                {paymentMethod === 'transfer' && (
+                  <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                    <p className="font-semibold text-yellow-800">📌 계좌이체 안내</p>
+                    <p className="text-yellow-700 mt-1">주문 완료 후 계좌번호가 안내됩니다. 입금 확인 후 24시간 내 결과를 발송해드립니다.</p>
+                  </div>
+                )}
 
                 <div className="mt-4 space-y-2 text-sm text-gray-600">
                   <div className="flex items-start"><span className="mr-2">✓</span><span>결제 후 24시간 내 이메일 발송</span></div>
                   <div className="flex items-start"><span className="mr-2">✓</span><span>7일 이내 환불 가능 (발송 전)</span></div>
-                  <div className="flex items-start"><span className="mr-2">✓</span><span>토스페이먼츠 안전결제</span></div>
+                  {paymentMethod === 'card' && (
+                    <div className="flex items-start"><span className="mr-2">✓</span><span>토스페이먼츠 안전결제</span></div>
+                  )}
                 </div>
 
                 <div className="mt-6 pt-4 border-t">
-                  <p className="text-xs text-gray-500 text-center">토스페이먼츠를 통한 안전한 결제</p>
-                  <p className="text-xs text-gray-400 text-center mt-1">문의: 010-2806-2497</p>
+                  <p className="text-xs text-gray-500 text-center">문의: fatemate2026@gmail.com</p>
+                  <p className="text-xs text-gray-400 text-center mt-1">전화: 010-2806-2497</p>
                 </div>
               </div>
             </div>
