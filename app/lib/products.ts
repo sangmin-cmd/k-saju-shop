@@ -4,7 +4,7 @@ export const products: Product[] = [
   {
     id: 'basic',
     name: '정통 사주 분석',
-    description: '정통 사주팔자 분석으로 나를 알아가는 첫걸음',
+    description: '오행 밸런스 · 2026 운세 · 타고난 성향',
     price: 9900,
     features: [
       '사주팔자 완전 분석',
@@ -12,7 +12,7 @@ export const products: Product[] = [
       '십성으로 보는 성격 유형',
       '2026년 운세 흐름',
       '월별 운세 가이드',
-      '15페이지 PDF 리포트'
+      '상세 PDF 리포트'
     ],
     pages: 15,
     category: 'basic',
@@ -23,7 +23,7 @@ export const products: Product[] = [
   {
     id: 'cross',
     name: '정통사주 × MBTI 분석',
-    description: '사주 × MBTI 융합! 동서양 분석의 만남',
+    description: '160가지 페르소나 · 강점/약점 · 액션 가이드',
     price: 14900,
     originalPrice: 19900,
     features: [
@@ -33,7 +33,7 @@ export const products: Product[] = [
       '연애 DNA & 이상형 분석',
       '재물운 & 직업 적성',
       '건강운 & 대인관계 전략',
-      '30페이지+ PDF 리포트'
+      '상세 PDF 리포트'
     ],
     pages: 30,
     category: 'premium',
@@ -45,7 +45,7 @@ export const products: Product[] = [
   {
     id: 'fatemate',
     name: '연인 궁합 스페셜 분석',
-    description: '두 사람의 운명적 궁합 심층 분석',
+    description: '케미 점수 · 갈등 포인트 · 소통 전략',
     price: 14900,
     originalPrice: 19900,
     features: [
@@ -55,7 +55,7 @@ export const products: Product[] = [
       '관계 강점 & 주의점',
       '갈등 해결 & 화해 전략',
       '연애 타이밍 가이드',
-      '25페이지 PDF 리포트'
+      '상세 PDF 리포트'
     ],
     pages: 25,
     category: 'compatibility',
