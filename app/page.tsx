@@ -125,16 +125,16 @@ export default function Home() {
             <span className="text-amber-300 font-semibold">MBTI × 사주</span>로 읽어드립니다.
           </p>
 
-          {/* 핵심 3줄 - 더 넓은 여백 */}
+          {/* 후킹 질문 3개 */}
           <div className="flex flex-wrap justify-center gap-5 mb-14">
             <div className="px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">🎯 성향 — 어떻게 선택하는지</span>
+              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">💭 "그 사람, 나한테 진심일까?"</span>
             </div>
             <div className="px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">🌊 흐름 — 언제 밀고/쉬어야 하는지</span>
+              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">💕 "우리 궁합 괜찮은 걸까?"</span>
             </div>
             <div className="px-5 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">⚡ 액션 — 지금 해야 할 것/피해야 할 것</span>
+              <span style={{ color: 'rgba(245, 245, 240, 0.85)' }} className="text-sm">✨ "올해 언제가 내 타이밍일까?"</span>
             </div>
           </div>
 

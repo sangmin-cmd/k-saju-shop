@@ -5,7 +5,8 @@ export const products: Product[] = [
     id: 'basic',
     name: '정통 사주 분석',
     description: '오행 밸런스 · 2026 운세 · 타고난 성향',
-    price: 9900,
+    price: 4900,
+    originalPrice: 9800,
     features: [
       '사주팔자 완전 분석',
       '오행 분포 & 균형 진단',
@@ -18,14 +19,14 @@ export const products: Product[] = [
     category: 'basic',
     image: '/images/basic.png',
     icon: '☯️',
-    badge: '입문용'
+    badge: '50% 할인'
   },
   {
     id: 'cross',
     name: '정통사주 × MBTI 분석',
     description: '160가지 페르소나 · 강점/약점 · 액션 가이드',
-    price: 14900,
-    originalPrice: 19900,
+    price: 6900,
+    originalPrice: 13800,
     features: [
       '베이직 전체 내용 포함',
       'MBTI × 사주 크로스 분석',
@@ -46,8 +47,8 @@ export const products: Product[] = [
     id: 'fatemate',
     name: '연인 궁합 스페셜 분석',
     description: '케미 점수 · 갈등 포인트 · 소통 전략',
-    price: 14900,
-    originalPrice: 19900,
+    price: 9900,
+    originalPrice: 19800,
     features: [
       '사주 궁합 종합 점수',
       'MBTI 궁합 & 소통 스타일',
@@ -61,7 +62,7 @@ export const products: Product[] = [
     category: 'compatibility',
     image: '/images/fatemate.png',
     icon: '💫',
-    badge: '25% 할인',
+    badge: '50% 할인',
     popular: true
   }
 ];
