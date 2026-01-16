@@ -51,7 +51,7 @@ export default function Footer() {
 
           {/* 저작권 */}
           <div className="text-gray-500 text-sm">
-            <p>© 2025 K-Saju. All rights reserved.</p>
+            <p>© 2026 K-Saju. All rights reserved.</p>
           </div>
         </div>
       </div>
