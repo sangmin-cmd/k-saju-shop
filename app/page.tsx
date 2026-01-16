@@ -109,7 +109,7 @@ export default function Home() {
           {/* Badge - 골드 테두리 */}
           <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 backdrop-blur-sm rounded-full mb-10 border border-amber-500/30">
             <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
-            <span className="text-amber-200/90 text-sm font-medium tracking-wide">정밀 계산 + MBTI 교차 분석</span>
+            <span className="text-amber-200/90 text-sm font-medium tracking-wide">전통 사주 × 현대 심리학</span>
           </div>
           
           {/* H1 - 메인 카피 */}
