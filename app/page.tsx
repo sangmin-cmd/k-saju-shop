@@ -115,14 +115,14 @@ export default function Home() {
           {/* H1 - 메인 카피 */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight"
             style={{ color: '#F5F5F0' }}>
-            운명은 정교한<br />구조 안에 있습니다.
+            나를 깊이 이해하면,<br />상대가 보이기 시작합니다.
           </h1>
           
           {/* Sub - 부드러운 크림톤 */}
           <p className="text-lg md:text-xl mb-10 max-w-3xl mx-auto leading-relaxed"
             style={{ color: 'rgba(245, 245, 240, 0.75)' }}>
-            뻔한 위로나 모호한 조언은 이제 그만.<br className="hidden md:block" />
-            <span className="text-amber-300 font-semibold">100% 재현 가능한 K-Saju 엔진</span>이 당신의 성향부터 타이밍까지 분석합니다.
+            2026년 나의 흐름, 그리고 관계의 패턴까지<br className="hidden md:block" />
+            <span className="text-amber-300 font-semibold">MBTI × 사주</span>로 읽어드립니다.
           </p>
 
           {/* 핵심 3줄 - 더 넓은 여백 */}
@@ -654,10 +654,6 @@ export default function Home() {
                   <p className="flex items-center justify-center gap-2">
                     <span style={{ color: '#64c896' }}>◆</span>
                     <span>절기 · 만세력 정밀 계산</span>
-                  </p>
-                  <p className="flex items-center justify-center gap-2">
-                    <span style={{ color: '#64c896' }}>◆</span>
-                    <span>20년 경력 전문가 검수</span>
                   </p>
                   <p className="flex items-center justify-center gap-2">
                     <span style={{ color: '#64c896' }}>◆</span>
