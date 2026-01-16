@@ -31,7 +31,7 @@ export default function PrivacyPage() {
             준수하고 있습니다.
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            최종 수정일: 2024년 12월 18일
+            최종 수정일: 2026년 1월 17일
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
             <h2 className="text-xl font-bold mb-4">제1조 (개인정보의 처리 목적)</h2>
             <div className="space-y-3 text-gray-700">
               <p>
-                Human Insight Core(이하 "회사")는 다음의 목적을 위하여 개인정보를
+                브릿지에이치 연구소(이하 "회사")는 다음의 목적을 위하여 개인정보를
                 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는
                 이용되지 않으며, 이용 목적이 변경되는 경우에는 개인정보 보호법
                 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할
@@ -223,7 +223,7 @@ export default function PrivacyPage() {
                     </tr>
                     <tr>
                       <td className="border border-gray-300 p-2">
-                        토스페이먼츠 (예정)
+                        토스페이먼츠
                       </td>
                       <td className="border border-gray-300 p-2">결제 처리</td>
                     </tr>
@@ -384,8 +384,8 @@ export default function PrivacyPage() {
               <div className="bg-gray-50 p-4 rounded-lg mt-3">
                 <p className="font-semibold mb-2">개인정보 보호책임자</p>
                 <ul className="space-y-1 text-sm">
-                  <li>성명: Human Insight Core 대표</li>
-                  <li>이메일: contact@humaninsight.co.kr</li>
+                  <li>성명: 브릿지에이치 연구소 대표</li>
+                  <li>이메일: fatemate2026@gmail.com</li>
                 </ul>
               </div>
               <p className="mt-3">
@@ -454,7 +454,7 @@ export default function PrivacyPage() {
             <div className="space-y-3 text-gray-700">
               <ol className="list-decimal list-inside space-y-2 ml-4">
                 <li>
-                  이 개인정보처리방침은 2024년 12월 18일부터 적용됩니다.
+                  이 개인정보처리방침은 2026년 1월 1일부터 적용됩니다.
                 </li>
                 <li>
                   이전의 개인정보 처리방침은 아래에서 확인하실 수 있습니다:
@@ -470,7 +470,7 @@ export default function PrivacyPage() {
           <section className="border-t pt-8">
             <h2 className="text-xl font-bold mb-4">부칙</h2>
             <p className="text-gray-700">
-              본 방침은 2024년 12월 18일부터 시행됩니다.
+              본 방침은 2026년 1월 1일부터 시행됩니다.
             </p>
           </section>
         </div>

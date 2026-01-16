@@ -575,7 +575,7 @@ export default function Home() {
                 <div className="space-y-2" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
                   <p className="flex items-center justify-center gap-2">
                     <span style={{ color: '#C0C0C0' }}>◆</span>
-                    <span>256비트 암호화 전송</span>
+                    <span>은행급 보안 적용</span>
                   </p>
                   <p className="flex items-center justify-center gap-2">
                     <span style={{ color: '#C0C0C0' }}>◆</span>
@@ -614,7 +614,7 @@ export default function Home() {
                 <div className="space-y-2" style={{ color: 'rgba(245, 245, 240, 0.7)' }}>
                   <p className="flex items-center justify-center gap-2">
                     <span style={{ color: '#d4af37' }}>◆</span>
-                    <span>국내 PG사 안전 거래</span>
+                    <span>토스페이먼츠 안전 거래</span>
                   </p>
                   <p className="flex items-center justify-center gap-2">
                     <span style={{ color: '#d4af37' }}>◆</span>
