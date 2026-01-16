@@ -110,11 +110,6 @@ export default function ProductCard({ product, compact = false }: ProductCardPro
           </ul>
         )}
 
-        {/* 페이지 수 */}
-        <div className="text-sm text-gray-500 mb-4">
-          📄 {product.pages}페이지 PDF
-        </div>
-
         {/* 버튼 */}
         <div className="flex gap-2">
           <Link 
