@@ -31,7 +31,7 @@ export default function TermsPage() {
             바랍니다.
           </p>
           <p className="text-sm text-gray-500 mt-2">
-            최종 수정일: 2024년 12월 18일
+            최종 수정일: 2026년 1월 17일
           </p>
         </div>
 
@@ -41,7 +41,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-bold mb-4">제1조 (목적)</h2>
             <p className="text-gray-700 leading-relaxed">
-              본 약관은 Human Insight Core(이하 "회사")가 운영하는 K-Saju Shop
+              본 약관은 브릿지에이치 연구소(이하 "회사")가 운영하는 K-Saju Shop
               웹사이트(이하 "사이트")에서 제공하는 인터넷 관련 서비스(이하
               "서비스")를 이용함에 있어 회사와 이용자의 권리, 의무 및 책임사항을
               규정함을 목적으로 합니다.
@@ -356,7 +356,7 @@ export default function TermsPage() {
           <section className="border-t pt-8">
             <h2 className="text-xl font-bold mb-4">부칙</h2>
             <p className="text-gray-700">
-              본 약관은 2024년 12월 18일부터 시행합니다.
+              본 약관은 2026년 1월 1일부터 시행합니다.
             </p>
           </section>
         </div>
