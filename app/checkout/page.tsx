@@ -480,9 +480,19 @@ export default function CheckoutPage() {
                 <div className="mt-4 space-y-2 text-sm text-gray-600">
                   <div className="flex items-start"><span className="mr-2">✓</span><span>결제 후 24시간 내 이메일 발송</span></div>
                   <div className="flex items-start"><span className="mr-2">✓</span><span>7일 이내 환불 가능 (발송 전)</span></div>
-                  {paymentMethod === 'card' && (
-                    <div className="flex items-start"><span className="mr-2">✓</span><span>토스페이먼츠 안전결제</span></div>
-                  )}
+                </div>
+
+                {/* 안전결제 신뢰 박스 */}
+                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xl">🔒</span>
+                    <span className="font-bold text-blue-800">안전한 결제</span>
+                  </div>
+                  <div className="space-y-1 text-sm text-blue-700">
+                    <p>• 카드 정보는 <strong>토스페이먼츠</strong>에서 안전하게 처리</p>
+                    <p>• 본 사이트에 카드 정보가 저장되지 않습니다</p>
+                    <p>• <strong>구매안전서비스</strong> 가입 사업자</p>
+                  </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t">

@@ -91,9 +91,6 @@ export default function Header() {
                 <Link href="/login" className="hidden md:block text-gray-600 hover:text-black transition-colors font-light">
                   로그인
                 </Link>
-                <Link href="/signup" className="hidden md:block px-6 py-2 bg-black text-white font-light hover:bg-gray-800 transition-colors">
-                  회원가입
-                </Link>
               </>
             )}
 
@@ -129,7 +126,6 @@ export default function Header() {
               ) : (
                 <>
                   <Link href="/login" className="text-gray-600 hover:text-black transition-colors font-light">로그인</Link>
-                  <Link href="/signup" className="px-6 py-2 bg-black text-white text-center font-light">회원가입</Link>
                 </>
               )}
             </nav>
