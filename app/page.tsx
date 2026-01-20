@@ -78,9 +78,9 @@ export default function Home() {
   const reviews = [
     { text: '"설명이 뻔하지 않고 행동 가이드가 있어서 좋았어요."', author: '30대, 직장인', rating: 5 },
     { text: '"결과가 재현돼서 신뢰가 생겼습니다."', author: '40대, 자영업', rating: 5 },
-    { text: '"오행 밸런스 보고 생활 루틴을 바꿨더니 컨디션이 달라졌어요."', author: '20대, 대학원생', rating: 5 },
+    { text: '"오행 밸런스 보고 생활 루틴을 바꿨더니 컨디션이 달라졌어요."', author: '20대, 대학원생', rating: 4 },
     { text: '"연애 패턴이 정확히 맞아서 소름…"', author: '30대, 프리랜서', rating: 5 },
-    { text: '"PDF로 정리돼서 상담 자료처럼 쓰기 좋아요."', author: '40대, 컨설턴트', rating: 5 },
+    { text: '"PDF로 정리돼서 상담 자료처럼 쓰기 좋아요."', author: '40대, 컨설턴트', rating: 4 },
     { text: '"MBTI랑 같이 보니까 납득이 됩니다."', author: '20대, 직장인', rating: 5 }
   ];
 
