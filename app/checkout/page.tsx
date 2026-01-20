@@ -97,9 +97,7 @@ export default function CheckoutPage() {
 
     const phoneRegex = /^01[0-9]{8,9}$/;
     const cleanPhone = formData.customerPhone.replace(/-/g, '');
-    if (!formData.customerPhone.trim()) {
-      newErrors.customerPhone = '전화번호를 입력해주세요';
-    } else if (!phoneRegex.test(cleanPhone)) {
+    if (formData.customerPhone.trim() && !phoneRegex.test(cleanPhone)) {
       newErrors.customerPhone = '올바른 전화번호 형식이 아닙니다 (예: 01012345678)';
     }
 
@@ -325,7 +323,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-1">전화번호 *</label>
+                    <label className="block text-sm font-medium mb-1">전화번호 <span className="text-gray-400 text-xs">(선택)</span></label>
                     <input
                       type="tel"
                       name="customerPhone"

@@ -73,14 +73,18 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* 하단 링크 */}
-        <div className="text-center text-sm text-gray-600">
-          <p>
-            계정이 없으신가요?{' '}
-            <Link href="/signup" className="text-primary-500 hover:text-primary-600 font-semibold">
-              회원가입
+        {/* 비회원 구매 안내 */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+          <div className="text-center">
+            <p className="text-blue-800 font-semibold mb-2">💡 로그인 없이 바로 구매 가능!</p>
+            <p className="text-blue-600 text-sm mb-4">비회원도 이메일만 입력하면 결과물을 받을 수 있어요.</p>
+            <Link 
+              href="/products" 
+              className="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              상품 보러가기 →
             </Link>
-          </p>
+          </div>
         </div>
 
         {/* 홈으로 */}
