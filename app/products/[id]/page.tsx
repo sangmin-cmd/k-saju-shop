@@ -153,14 +153,6 @@ export default function ProductDetailPage() {
               </ul>
             </div>
 
-            {/* 페이지 수 */}
-            <div className="bg-slate-50 p-4 rounded-lg mb-8 border border-slate-200">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700">📄 PDF 페이지 수</span>
-                <span className="font-bold text-lg text-slate-800">{product.pages}페이지</span>
-              </div>
-            </div>
-
             {/* 버튼 */}
             <div className="space-y-4">
               <button 
