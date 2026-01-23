@@ -10,11 +10,11 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { totalItems } = useCart();
-  const { user, logOut } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleSignOut = () => {
-    logOut();
+    logout();
     setIsUserMenuOpen(false);
   };
 
