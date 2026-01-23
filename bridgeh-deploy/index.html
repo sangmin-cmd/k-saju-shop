@@ -1,0 +1,4271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bridge H | AI Solution Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Fallback: Inline SVG Icons -->
+    <style>
+        .svg-icon {
+            width: 28px;
+            height: 28px;
+            stroke: var(--blue-light);
+        }
+        .svg-icon-sm {
+            width: 20px;
+            height: 20px;
+            stroke: var(--navy);
+        }
+        .service-icon svg {
+            stroke: var(--blue-light);
+        }
+        .about-vision .icon svg {
+            stroke: var(--blue-light);
+        }
+    </style>
+    <style>
+        :root {
+            --navy: #1a3a5c;
+            --navy-light: #2d5a87;
+            --navy-dark: #0f2744;
+            --blue: #3498db;
+            --blue-light: #5dade2;
+            --gold: #C5A059;
+            --gold-light: #D4B76A;
+            --white: #FFFFFF;
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-400: #ADB5BD;
+            --gray-600: #6C757D;
+            --gray-800: #343A40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--gray-800);
+            line-height: 1.7;
+            background: var(--white);
+            overflow-x: hidden;
+            word-break: keep-all;
+        }
+
+        .font-mont {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--blue);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s, opacity 0.1s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 39, 68, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(15, 39, 68, 0.98);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--blue);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--blue-light);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            color: var(--white) !important;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 80px;
+            left: 0;
+            right: 0;
+            background: rgba(15, 39, 68, 0.98);
+            padding: 24px;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            color: var(--white);
+            text-decoration: none;
+            padding: 12px 0;
+            font-size: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Hero Section with Particles */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 50%, var(--navy-light) 100%);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .hero-glow-1 {
+            top: -200px;
+            right: -100px;
+            background: var(--blue);
+        }
+
+        .hero-glow-2 {
+            bottom: -200px;
+            left: -100px;
+            background: var(--gold);
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 30px) scale(1.1); }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(52, 152, 219, 0.15);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            color: var(--blue-light);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.3;
+            margin-bottom: 24px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero h1 .typing-text {
+            color: var(--blue-light);
+            position: relative;
+        }
+
+        .hero h1 .typing-text::after {
+            content: '|';
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            max-width: 560px;
+            margin-bottom: 40px;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--blue);
+            color: var(--blue-light);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        /* Stats Counter */
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.8s forwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--blue-light);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+        }
+
+        /* Section Common */
+        section {
+            padding: 120px 0;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-label {
+            color: var(--blue);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            color: var(--gray-600);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Services Section - Premium Design */
+        .services {
+            background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue), transparent);
+        }
+
+        .services-premium-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .service-premium-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 48px 40px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-premium-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--navy), var(--blue), var(--blue-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s;
+        }
+
+        .service-premium-card::after {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            transition: all 0.5s;
+        }
+
+        .service-premium-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 32px 64px rgba(26, 58, 92, 0.12);
+            border-color: var(--blue);
+        }
+
+        .service-premium-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-premium-card:hover::after {
+            transform: scale(1.5);
+        }
+
+        .service-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            color: rgba(26, 58, 92, 0.06);
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            line-height: 1;
+        }
+
+        .service-icon-premium {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 12px 32px rgba(26, 58, 92, 0.2);
+            transition: all 0.4s;
+        }
+
+        .service-premium-card:hover .service-icon-premium {
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 16px 40px rgba(26, 58, 92, 0.25);
+        }
+
+        .service-icon-premium i,
+        .service-icon-premium svg {
+            font-size: 32px;
+            color: var(--blue-light);
+        }
+
+        .service-title-en {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-premium-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-premium-card .service-desc {
+            color: var(--gray-600);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-keyword {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(93, 173, 226, 0.05) 100%);
+            color: var(--navy);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(52, 152, 219, 0.15);
+            transition: all 0.3s;
+        }
+
+        .service-keyword:hover {
+            background: var(--blue);
+            color: white;
+            border-color: var(--blue);
+        }
+
+        .service-footer {
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-100);
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-xai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .service-xai-badge i {
+            color: var(--gold);
+        }
+
+        /* Services Responsive */
+        @media (max-width: 1024px) {
+            .services-premium-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .service-premium-card:last-child {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .services-premium-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-premium-card:last-child {
+                grid-column: span 1;
+            }
+
+            .service-premium-card {
+                padding: 36px 28px;
+            }
+
+            .service-number {
+                font-size: 48px;
+            }
+        }
+
+        /* Solutions Section */
+        .solutions {
+            background: var(--white);
+        }
+
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .solution-main {
+            grid-column: span 8;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            overflow: hidden;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: transform 0.4s;
+        }
+
+        .solution-main:hover {
+            transform: scale(1.02);
+        }
+
+        .solution-main::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .solution-main .badge {
+            position: absolute;
+            top: 32px;
+            left: 32px;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            color: var(--white);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .solution-main h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .solution-main .desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            max-width: 480px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .solution-main .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .solution-main .feature {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .solution-main .feature:hover {
+            background: rgba(52, 152, 219, 0.3);
+            border-color: var(--blue);
+        }
+
+        .solution-card {
+            grid-column: span 4;
+            background: var(--gray-50);
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .solution-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.15);
+        }
+
+        .solution-card .icon {
+            width: 48px;
+            height: 48px;
+            background: var(--white);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: transform 0.4s;
+        }
+
+        .solution-card:hover .icon {
+            transform: rotateY(360deg);
+        }
+
+        .solution-card .icon i {
+            font-size: 20px;
+            color: var(--navy);
+        }
+
+        .solution-card .badge-live {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            color: var(--white);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .solution-card .badge-coming {
+            background: var(--gray-200);
+            color: var(--gray-600);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .solution-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .solution-card p {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+        }
+
+        .solution-card.coming {
+            opacity: 0.6;
+        }
+
+        .solution-card.coming:hover {
+            opacity: 0.8;
+        }
+
+        /* ===== NEW PREMIUM SOLUTIONS CSS ===== */
+        .solutions-premium-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        /* Flagship Solution - H-Insight */
+        .solution-flagship {
+            grid-column: span 12;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            border-radius: 24px;
+            padding: 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-flagship::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .flagship-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge-flagship {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy-dark);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .solution-flagship h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .flagship-subtitle {
+            color: var(--blue-light);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .flagship-desc {
+            color: rgba(255,255,255,0.75);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .flagship-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 32px;
+            align-items: stretch;
+        }
+
+        .feature-tag {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--white);
+            padding: 0 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 44px;
+            line-height: 1;
+            box-sizing: border-box;
+            white-space: nowrap;
+        }
+
+        .feature-tag:hover {
+            background: rgba(52, 152, 219, 0.3);
+            border-color: var(--blue);
+        }
+
+        .flagship-targets {
+            display: flex;
+            gap: 24px;
+        }
+
+        .target-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .target-item i {
+            color: var(--gold);
+        }
+
+        .flagship-video {
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-placeholder {
+            background: rgba(0,0,0,0.3);
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 16px;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .video-placeholder:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: var(--blue);
+        }
+
+        .video-placeholder i {
+            font-size: 64px;
+            color: var(--blue-light);
+            margin-bottom: 16px;
+        }
+
+        .video-placeholder span {
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+        }
+
+        /* Premium Solution - H-Care */
+        .solution-premium {
+            grid-column: span 6;
+            background: linear-gradient(180deg, var(--gray-50) 0%, var(--white) 100%);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.4s;
+        }
+
+        .solution-premium:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(26, 58, 92, 0.15);
+            border-color: var(--blue);
+        }
+
+        .premium-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .premium-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .premium-icon i {
+            font-size: 28px;
+            color: var(--white);
+        }
+
+        .premium-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .badge-new {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-live {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .solution-premium h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .premium-subtitle {
+            color: var(--blue);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .premium-desc {
+            color: var(--gray-600);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .premium-tiers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .tier-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .tier-card.tier-director {
+            border-color: var(--gold);
+            background: linear-gradient(180deg, rgba(197, 160, 89, 0.05) 0%, var(--white) 100%);
+        }
+
+        .tier-card.tier-staff {
+            border-color: var(--blue);
+            background: linear-gradient(180deg, rgba(52, 152, 219, 0.05) 0%, var(--white) 100%);
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .tier-director .tier-header {
+            color: var(--gold);
+        }
+
+        .tier-staff .tier-header {
+            color: var(--blue);
+        }
+
+        .tier-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tier-features li {
+            font-size: 12px;
+            color: var(--gray-600);
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tier-features li i {
+            font-size: 10px;
+            color: var(--blue);
+        }
+
+        .video-placeholder-sm {
+            background: var(--navy);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .video-placeholder-sm:hover {
+            background: var(--navy-light);
+        }
+
+        .video-placeholder-sm i {
+            color: var(--white);
+            font-size: 20px;
+        }
+
+        .video-placeholder-sm span {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Standard Solution Cards */
+        .solution-card-new {
+            grid-column: span 3;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .solution-card-new:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(52, 152, 219, 0.12);
+            border-color: var(--blue);
+        }
+
+        .solution-card-new.coming {
+            opacity: 0.7;
+            background: var(--gray-50);
+        }
+
+        .solution-card-new.coming:hover {
+            opacity: 0.9;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s;
+        }
+
+        .solution-card-new:hover .card-icon {
+            transform: rotateY(360deg);
+        }
+
+        .card-icon i {
+            font-size: 24px;
+            color: var(--white);
+        }
+
+        .card-icon.youtube {
+            background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+        }
+
+        .badge-coming {
+            background: var(--gray-200);
+            color: var(--gray-600);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .solution-card-new h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .card-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+        }
+
+        .card-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 13px;
+            color: var(--gray-800);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .card-features li:last-child {
+            border-bottom: none;
+        }
+
+        .card-features li i {
+            color: var(--blue);
+            width: 16px;
+        }
+
+        .card-result {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(93, 173, 226, 0.05) 100%);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .result-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .card-coming-label {
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 13px;
+            padding: 14px;
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+
+        .card-coming-label i {
+            margin-right: 6px;
+        }
+
+        /* H-Care Core Features */
+        .premium-core-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(26, 58, 92, 0.05) 0%, rgba(52, 152, 219, 0.05) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(26, 58, 92, 0.1);
+        }
+
+        .core-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .core-feature-item i {
+            width: 36px;
+            height: 36px;
+            background: var(--navy);
+            color: var(--white);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .core-feature-item div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .core-feature-item strong {
+            font-size: 14px;
+            color: var(--navy);
+            margin-bottom: 2px;
+        }
+
+        .core-feature-item span {
+            font-size: 11px;
+            color: var(--gray-500);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Card Subtitle */
+        .card-subtitle {
+            font-size: 11px;
+            color: var(--blue);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Coming Soon Section - 2026 */
+        .solution-coming-section {
+            grid-column: span 5;
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-50) 100%);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px dashed var(--gray-300);
+        }
+
+        .coming-header {
+            margin-bottom: 24px;
+        }
+
+        .coming-label {
+            background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .coming-header p {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .coming-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .coming-card {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
+        }
+
+        .coming-card:hover {
+            border-color: var(--blue);
+            box-shadow: 0 8px 24px rgba(52, 152, 219, 0.1);
+        }
+
+        .coming-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .coming-icon i {
+            font-size: 20px;
+            color: var(--gray-500);
+        }
+
+        .coming-info {
+            flex: 1;
+        }
+
+        .coming-info h5 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 6px;
+        }
+
+        .coming-info p {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .coming-date {
+            font-size: 12px;
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        .coming-date i {
+            margin-right: 6px;
+            color: var(--blue);
+        }
+
+        /* Innovation Labs */
+        .innovation-labs {
+            margin-top: 48px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(15, 39, 68, 0.03) 0%, rgba(52, 152, 219, 0.03) 100%);
+            border-radius: 24px;
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+
+        .labs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.1);
+        }
+
+        .labs-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--navy);
+            letter-spacing: 1px;
+        }
+
+        .labs-title i {
+            color: var(--blue);
+        }
+
+        .labs-header p {
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .labs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .labs-grid.labs-grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .labs-card {
+            display: flex;
+            gap: 20px;
+            padding: 24px;
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
+        }
+
+        .labs-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        .labs-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gray-100);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .labs-icon i {
+            font-size: 24px;
+            color: var(--navy);
+        }
+
+        .labs-icon.youtube {
+            background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%);
+        }
+
+        .labs-icon.youtube i {
+            color: white;
+        }
+
+        .labs-icon.ktype {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+        }
+
+        .labs-icon.ktype i {
+            color: white;
+        }
+
+        .labs-content {
+            flex: 1;
+        }
+
+        .labs-content h5 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .labs-subtitle {
+            font-size: 11px !important;
+            color: var(--blue) !important;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 6px !important;
+            letter-spacing: 0.3px;
+        }
+
+        .labs-content p {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .labs-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .labs-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            color: white;
+        }
+
+        .labs-badge.global {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy-dark);
+        }
+
+        /* Solutions Responsive Updates */
+        @media (max-width: 1024px) {
+            .solution-flagship {
+                grid-template-columns: 1fr;
+                padding: 32px;
+            }
+
+            .solution-flagship h3 {
+                font-size: 42px;
+            }
+
+            .solution-premium {
+                grid-column: span 12;
+            }
+
+            .solution-card-new {
+                grid-column: span 6;
+            }
+
+            .solution-coming-section {
+                grid-column: span 6;
+            }
+
+            .labs-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .labs-grid.labs-grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .solutions-premium-grid {
+                gap: 16px;
+            }
+
+            .solution-flagship h3 {
+                font-size: 32px;
+            }
+
+            .flagship-targets {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .video-placeholder {
+                height: 200px;
+            }
+
+            .premium-tiers {
+                grid-template-columns: 1fr;
+            }
+
+            .premium-core-features {
+                padding: 16px;
+            }
+
+            .solution-card-new {
+                grid-column: span 12;
+            }
+
+            .solution-coming-section {
+                grid-column: span 12;
+            }
+
+            .innovation-labs {
+                padding: 24px;
+            }
+
+            .labs-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .labs-grid,
+            .labs-grid.labs-grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .labs-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .labs-icon {
+                margin: 0 auto;
+            }
+
+            .labs-badges {
+                justify-content: center;
+            }
+        }
+
+        /* About Section */
+        .about {
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-content .section-label {
+            color: var(--blue-light);
+        }
+
+        .about-content .section-title {
+            color: var(--white);
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        .about-quote {
+            font-size: 18px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.9;
+            border-left: 3px solid var(--blue);
+            padding-left: 24px;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .about-vision {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .about-vision .icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(52, 152, 219, 0.15);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .about-vision .icon i {
+            font-size: 24px;
+            color: var(--blue-light);
+        }
+
+        .about-vision h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .about-vision p {
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+        }
+
+        .about-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 48px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.4s;
+        }
+
+        .about-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .ceo-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .ceo-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ceo-avatar span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .ceo-info h4 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ceo-info p {
+            color: var(--blue-light);
+            font-size: 14px;
+        }
+
+        .ceo-career {
+            list-style: none;
+        }
+
+        .ceo-career li {
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+
+        .ceo-career li:hover {
+            color: var(--white);
+            padding-left: 10px;
+        }
+
+        .ceo-career li:last-child {
+            border-bottom: none;
+        }
+
+        .ceo-career li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--blue);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: var(--gray-50);
+        }
+
+        .contact-wrapper {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .contact-form {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 48px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            transition: transform 0.4s;
+        }
+
+        .contact-form:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(26, 58, 92, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--navy-dark);
+            color: rgba(255,255,255,0.6);
+            padding: 60px 0 40px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-logo img {
+            height: 80px;
+            width: auto;
+        }
+
+        .footer-info {
+            text-align: right;
+            font-size: 14px;
+            line-height: 2;
+        }
+
+        .footer-info p {
+            margin: 0;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-copy {
+            font-size: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--blue-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .solution-main {
+                grid-column: span 12;
+            }
+            .solution-card {
+                grid-column: span 6;
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+            .hero-stats {
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero-buttons {
+                flex-direction: column;
+            }
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .solution-card {
+                grid-column: span 12;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .footer-top {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .footer-info {
+                text-align: center;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+            .cursor, .cursor-dot {
+                display: none;
+            }
+        }
+
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--navy-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 24px;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--blue), var(--blue-light));
+            animation: loading 1.5s ease forwards;
+        }
+
+        @keyframes loading {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        /* ===== NEW SOLUTIONS STRUCTURE CSS ===== */
+        .engine-platform {
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            border-radius: 32px;
+            padding: 64px;
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .engine-platform::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            right: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .engine-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .engine-title-area {
+            flex: 1;
+        }
+
+        .engine-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy-dark);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .engine-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .engine-tagline {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .engine-tagline .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--blue-light);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .engine-tagline span {
+            color: var(--blue-light);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .engine-description {
+            max-width: 560px;
+        }
+
+        .engine-description p {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .engine-description strong {
+            color: var(--white);
+        }
+
+        .engine-diagram {
+            position: relative;
+            z-index: 1;
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        .diagram-container {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .diagram-formula {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .formula-item {
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .formula-item .icon {
+            font-size: 20px;
+            color: var(--blue-light);
+            margin-bottom: 4px;
+        }
+
+        .formula-item .label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+
+        .formula-operator {
+            color: var(--gold);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .diagram-arrow {
+            color: var(--blue-light);
+            font-size: 24px;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .diagram-result {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%);
+            padding: 16px 24px;
+            border-radius: 12px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .diagram-result .label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 4px;
+        }
+
+        .diagram-result .value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .engine-capabilities {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .capability-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s;
+        }
+
+        .capability-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(52, 152, 219, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .capability-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .capability-icon i {
+            font-size: 20px;
+            color: var(--blue-light);
+        }
+
+        .capability-card h4 {
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .capability-card p {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .powered-section {
+            margin-bottom: 48px;
+        }
+
+        .powered-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .powered-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--navy) 0%, transparent 100%);
+        }
+
+        .powered-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--navy);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .powered-label i {
+            color: var(--blue);
+        }
+
+        .powered-line-right {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--navy) 100%);
+        }
+
+        .solutions-grid-new {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .solution-card-v2 {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card-v2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--blue) 0%, var(--blue-light) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .solution-card-v2:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 48px rgba(26, 58, 92, 0.15);
+            border-color: var(--blue);
+        }
+
+        .solution-card-v2:hover::before {
+            opacity: 1;
+        }
+
+        .solution-card-v2.coming-soon {
+            opacity: 0.7;
+        }
+
+        .solution-card-v2.coming-soon:hover {
+            opacity: 0.85;
+        }
+
+        .card-header-v2 {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-icon-v2 {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon-v2.insurance {
+            background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+        }
+
+        .card-icon-v2.healthcare {
+            background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+        }
+
+        .card-icon-v2.finance {
+            background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+        }
+
+        .card-icon-v2 i {
+            font-size: 24px;
+            color: var(--white);
+        }
+
+        .card-badges-v2 {
+            display: flex;
+            gap: 6px;
+        }
+
+        .card-title-v2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle-v2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blue);
+            margin-bottom: 12px;
+        }
+
+        .card-desc-v2 {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            min-height: 44px;
+        }
+
+        .card-features-v2 {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .feature-item-v2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .feature-item-v2:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .feature-item-v2 i {
+            font-size: 14px;
+            color: var(--blue);
+            width: 20px;
+        }
+
+        .feature-item-v2 span {
+            font-size: 13px;
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+        .card-target-v2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-top: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .target-label-v2 {
+            font-size: 12px;
+            color: var(--gray-400);
+        }
+
+        .target-value-v2 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        .ipa-section {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 48px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .ipa-content h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .ipa-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--blue);
+            margin-bottom: 16px;
+        }
+
+        .ipa-desc {
+            font-size: 15px;
+            color: var(--gray-600);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .ipa-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .ipa-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 12px;
+        }
+
+        .ipa-feature i {
+            font-size: 20px;
+            color: var(--navy);
+        }
+
+        .ipa-feature span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .ipa-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ipa-diagram {
+            width: 280px;
+            height: 280px;
+            background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 100%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .ipa-diagram::before {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border: 2px dashed rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            animation: ipaRotate 20s linear infinite;
+        }
+
+        @keyframes ipaRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .ipa-diagram i {
+            font-size: 48px;
+            color: var(--blue-light);
+            margin-bottom: 12px;
+        }
+
+        .ipa-diagram span {
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .ipa-diagram .stat {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-top: 8px;
+        }
+
+        .labs-section-new {
+            background: linear-gradient(135deg, var(--gray-100) 0%, var(--white) 100%);
+            border-radius: 24px;
+            padding: 48px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .labs-header-new {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .labs-title-new {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .labs-title-new i {
+            font-size: 24px;
+            color: var(--navy);
+        }
+
+        .labs-title-new span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--navy);
+        }
+
+        .labs-desc-new {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .labs-grid-new {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .lab-card-new {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .lab-card-new:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+        }
+
+        .lab-icon-new {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .lab-icon-new.youtube { background: linear-gradient(135deg, #FF0000 0%, #CC0000 100%); }
+        .lab-icon-new.accounting { background: linear-gradient(135deg, #6366F1 0%, #818CF8 100%); }
+        .lab-icon-new.invest { background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); }
+        .lab-icon-new.hospital { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
+
+        .lab-icon-new i {
+            font-size: 20px;
+            color: var(--white);
+        }
+
+        .lab-card-new h5 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+        }
+
+        .lab-card-new p {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        .lab-status-new {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .lab-status-new.live {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .lab-status-new.coming {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366F1;
+        }
+
+        .lab-status-new.research {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+        }
+
+        /* New Solutions Responsive */
+        @media (max-width: 1024px) {
+            .engine-header {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .engine-diagram {
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .engine-capabilities {
+                grid-template-columns: 1fr;
+            }
+
+            .solutions-grid-new {
+                grid-template-columns: 1fr;
+            }
+
+            .ipa-section {
+                grid-template-columns: 1fr;
+            }
+
+            .ipa-visual {
+                order: -1;
+            }
+
+            .labs-grid-new {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .engine-name {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .engine-platform {
+                padding: 32px 24px;
+            }
+
+            .engine-name {
+                font-size: 36px;
+            }
+
+            .ipa-features {
+                grid-template-columns: 1fr;
+            }
+
+            .labs-grid-new {
+                grid-template-columns: 1fr;
+            }
+
+            .labs-header-new {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">Bridge H</div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="data:image/png;base64,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" alt="Bridge H">
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#services">사업 영역</a></li>
+                <li><a href="#solutions">솔루션</a></li>
+                <li><a href="#engine">H-Engine</a></li>
+                <li><a href="#about">회사 소개</a></li>
+                <li><a href="#contact" class="nav-cta">문의하기</a></li>
+            </ul>
+            <button class="mobile-toggle" onclick="toggleMobile()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#home" onclick="toggleMobile()">홈</a>
+        <a href="#services" onclick="toggleMobile()">사업 영역</a>
+        <a href="#solutions" onclick="toggleMobile()">솔루션</a>
+        <a href="#engine" onclick="toggleMobile()">H-Engine</a>
+        <a href="#about" onclick="toggleMobile()">회사 소개</a>
+        <a href="#contact" onclick="toggleMobile()">문의하기</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <canvas id="particles-canvas"></canvas>
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-container">
+            <span class="hero-badge">AI SOLUTION ARCHITECTURE</span>
+            <h1>
+                인간 행동의 본질을<br>
+                <span class="typing-text" id="typingText"></span>
+            </h1>
+            <p class="hero-desc">
+                Bridge H는 심리, 시간, 기질 데이터를 융합한 독자적 행동 예측 엔진과 
+                지능형 자동화 솔루션을 통해 비즈니스의 미래 가치를 창출합니다.
+            </p>
+            <div class="hero-buttons">
+                <a href="#solutions" class="btn-primary">
+                    솔루션 살펴보기 
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </a>
+                <a href="#contact" class="btn-secondary">파트너십 문의</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="25">0</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="7">0</div>
+                    <div class="stat-label">Industries Covered</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="3">0</div>
+                    <div class="stat-label">AI Solutions</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-label">CORE COMPETENCIES</span>
+                <h2 class="section-title">사업 영역</h2>
+                <p class="section-desc">Connecting Human Insight to Future Tech — 인간 행동의 본질을 기술로 연결합니다</p>
+            </div>
+            
+            <div class="services-premium-grid">
+                
+                <!-- 1. AI Strategic Architecture -->
+                <div class="service-premium-card reveal">
+                    <span class="service-number">01</span>
+                    <div class="service-icon-premium">
+                        <i class="fas fa-drafting-compass"></i>
+                    </div>
+                    <p class="service-title-en">AI Strategic Architecture</p>
+                    <h3>AI 전략적 아키텍처 설계</h3>
+                    <p class="service-desc">
+                        비즈니스 도메인의 본질을 분석하여 지속 가능한 하이엔드 AI 아키텍처를 설계합니다. 
+                        데이터 레이어의 구조화부터 정밀 알고리즘 선정까지, 기업의 미래 성장을 위한 
+                        <strong>전략적 기술 청사진</strong>을 제시합니다.
+                    </p>
+                    <div class="service-keywords">
+                        <span class="service-keyword">#도메인최적화</span>
+                        <span class="service-keyword">#확장가능한설계</span>
+                        <span class="service-keyword">#기술거버넌스</span>
+                    </div>
+                    <div class="service-footer">
+                        <span class="service-xai-badge">
+                            <i class="fas fa-certificate"></i>
+                            설명 가능한 AI(XAI) 기반 설계
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- 2. Behavioral AI Intelligence -->
+                <div class="service-premium-card reveal">
+                    <span class="service-number">02</span>
+                    <div class="service-icon-premium">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <p class="service-title-en">Behavioral AI Intelligence</p>
+                    <h3>지능형 행동 예측 솔루션 개발</h3>
+                    <p class="service-desc">
+                        브릿지에이치만의 <strong>3-WAY 융합 분석 엔진</strong>을 기반으로 
+                        인간 행동의 '이유(Why)'와 '타이밍(When)'을 예측하는 독보적 솔루션을 구축합니다. 
+                        단순한 자동화를 넘어 <strong>비즈니스 임팩트</strong>를 즉각적으로 창출합니다.
+                    </p>
+                    <div class="service-keywords">
+                        <span class="service-keyword">#3-WAY Fusion</span>
+                        <span class="service-keyword">#행동경제학알고리즘</span>
+                        <span class="service-keyword">#실행가능한통찰</span>
+                    </div>
+                    <div class="service-footer">
+                        <span class="service-xai-badge">
+                            <i class="fas fa-certificate"></i>
+                            투명한 의사결정 지원 시스템
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- 3. Enterprise AI Transformation -->
+                <div class="service-premium-card reveal">
+                    <span class="service-number">03</span>
+                    <div class="service-icon-premium">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <p class="service-title-en">Enterprise AI Transformation</p>
+                    <h3>기업 AI 트랜스포메이션 컨설팅</h3>
+                    <p class="service-desc">
+                        <strong>25년의 산업 통찰력</strong>을 바탕으로 실질적인 ROI를 보장하는 
+                        엔터프라이즈 AI 내재화 전략을 수립합니다. 단순 기술 도입을 넘어 
+                        <strong>실질적 성과 창출</strong>을 위한 단계별 실행 로드맵과 변화 관리 컨설팅을 제공합니다.
+                    </p>
+                    <div class="service-keywords">
+                        <span class="service-keyword">#ROI엔지니어링</span>
+                        <span class="service-keyword">#실질적성과창출</span>
+                        <span class="service-keyword">#기술내재화로드맵</span>
+                    </div>
+                    <div class="service-footer">
+                        <span class="service-xai-badge">
+                            <i class="fas fa-certificate"></i>
+                            End-to-End 트랜스포메이션 지원
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section class="solutions" id="solutions">
+        <div class="section-container">
+
+            <!-- Section Header -->
+            <div class="section-header reveal">
+                <span class="section-label">AI SOLUTIONS</span>
+                <h2 class="section-title">솔루션 포트폴리오</h2>
+                <p class="section-desc">하나의 검증된 예측 엔진, 산업별 맞춤 솔루션</p>
+            </div>
+
+            <!-- ===== PART 1: H-INSIGHT ENGINE ===== -->
+            <div class="engine-platform reveal">
+                <div class="engine-header">
+                    <div class="engine-title-area">
+                        <div class="engine-badge">
+                            <i class="fas fa-microchip"></i>
+                            CORE ENGINE
+                        </div>
+                        <h2 class="engine-name">H-Insight</h2>
+                        <div class="engine-tagline">
+                            <div class="pulse-dot"></div>
+                            <span>3-WAY Behavioral Prediction Engine</span>
+                        </div>
+                        <div class="engine-description">
+                            <p>
+                                고객이 <strong>'왜'</strong> 그렇게 행동하는지, <strong>'언제'</strong> 개입해야 효과적인지를
+                                심리 · 시간 · 기질 데이터 융합 분석으로 예측합니다.
+                            </p>
+                            <p>
+                                모든 H-시리즈 솔루션의 핵심 엔진으로서, 산업별 특화 모듈에 
+                                <strong>행동 예측 인텔리전스</strong>를 제공합니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="engine-diagram">
+                        <div class="diagram-container">
+                            <div class="diagram-formula">
+                                <div class="formula-item">
+                                    <div class="icon"><i class="fas fa-brain"></i></div>
+                                    <div class="label">심리</div>
+                                </div>
+                                <span class="formula-operator">×</span>
+                                <div class="formula-item">
+                                    <div class="icon"><i class="fas fa-clock"></i></div>
+                                    <div class="label">시간</div>
+                                </div>
+                                <span class="formula-operator">×</span>
+                                <div class="formula-item">
+                                    <div class="icon"><i class="fas fa-dna"></i></div>
+                                    <div class="label">기질</div>
+                                </div>
+                            </div>
+                            <div class="diagram-arrow">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="diagram-result">
+                                <div class="label">OUTPUT</div>
+                                <div class="value">Why + When = Optimal Intervention</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="engine-capabilities">
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>선제적 리스크 관리</h4>
+                        <p>과거 통계가 아닌 인지 편향과 기질 에너지 분석으로 리스크 발생 구간을 선제적으로 예측</p>
+                    </div>
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-crosshairs"></i>
+                        </div>
+                        <h4>최적 개입 타이밍</h4>
+                        <p>의사결정 품질이 저하되는 시점을 포착하여 골든 타임에 맞춤형 넛지 설계</p>
+                    </div>
+                    <div class="capability-card">
+                        <div class="capability-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h4>설명 가능한 로직</h4>
+                        <p>블랙박스 AI가 아닌 행동경제학 기반의 투명한 의사결정 지원 (XAI)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PART 2: POWERED BY H-INSIGHT ===== -->
+            <div class="powered-section">
+                <div class="powered-header">
+                    <div class="powered-line"></div>
+                    <div class="powered-label">
+                        <i class="fas fa-plug"></i>
+                        POWERED BY H-INSIGHT
+                    </div>
+                    <div class="powered-line-right"></div>
+                </div>
+
+                <div class="solutions-grid-new">
+                    
+                    <!-- H-Insu: Insurance -->
+                    <div class="solution-card-v2 reveal">
+                        <div class="card-header-v2">
+                            <div class="card-icon-v2 insurance">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="card-badges-v2">
+                                <span class="badge-new">NEW</span>
+                                <span class="badge-live">LIVE</span>
+                            </div>
+                        </div>
+                        <h3 class="card-title-v2">H-Insu</h3>
+                        <p class="card-subtitle-v2">Insurance Decision Intelligence</p>
+                        <p class="card-desc-v2">
+                            고객의 의사결정 패턴(Why)을 분석하여 최적화된 보험 설계와 맞춤형 상담 가이드를 제공합니다.
+                        </p>
+                        <div class="card-features-v2">
+                            <div class="feature-item-v2">
+                                <i class="fas fa-search"></i>
+                                <span>고객 의사결정 패턴(Why) 분석</span>
+                            </div>
+                            <div class="feature-item-v2">
+                                <i class="fas fa-file-signature"></i>
+                                <span>최적화된 보험 설계 가이드</span>
+                            </div>
+                            <div class="feature-item-v2">
+                                <i class="fas fa-user-cog"></i>
+                                <span>FC 고객 맞춤형 상담 가이드</span>
+                            </div>
+                        </div>
+                        <div class="card-target-v2">
+                            <span class="target-label-v2">Target →</span>
+                            <span class="target-value-v2">생명보험 · 손해보험 · GA</span>
+                        </div>
+                    </div>
+
+                    <!-- H-Care: Healthcare -->
+                    <div class="solution-card-v2 reveal">
+                        <div class="card-header-v2">
+                            <div class="card-icon-v2 healthcare">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="card-badges-v2">
+                                <span class="badge-live">LIVE</span>
+                            </div>
+                        </div>
+                        <h3 class="card-title-v2">H-Care</h3>
+                        <p class="card-subtitle-v2">Patient Experience Intelligence</p>
+                        <p class="card-desc-v2">
+                            환자 기질 분석으로 상담 클로징율을 높이고 블랙컨슈머 리스크를 사전 감지합니다.
+                        </p>
+                        <div class="card-features-v2">
+                            <div class="feature-item-v2">
+                                <i class="fas fa-bullseye"></i>
+                                <span>상담 클로징 확률 예측</span>
+                            </div>
+                            <div class="feature-item-v2">
+                                <i class="fas fa-user-cog"></i>
+                                <span>환자 맞춤형 상담 가이드</span>
+                            </div>
+                            <div class="feature-item-v2">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>블랙컨슈머 리스크 스캔</span>
+                            </div>
+                        </div>
+                        <div class="card-target-v2">
+                            <span class="target-label-v2">Target →</span>
+                            <span class="target-value-v2">병원 · 의원 · 메디컬 그룹</span>
+                        </div>
+                    </div>
+
+                    <!-- H-Invest: Finance (Coming Soon) -->
+                    <div class="solution-card-v2 coming-soon reveal">
+                        <div class="card-header-v2">
+                            <div class="card-icon-v2 finance">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-badges-v2">
+                                <span class="badge-coming">2026 Q2</span>
+                            </div>
+                        </div>
+                        <h3 class="card-title-v2">H-Invest</h3>
+                        <p class="card-subtitle-v2">Trader Psychology Intelligence</p>
+                        <p class="card-desc-v2">
+                            트레이더의 심리 패턴을 분석하여 의사결정 품질 저하 시점을 예측합니다.
+                        </p>
+                        <div class="card-features-v2">
+                            <div class="feature-item-v2">
+                                <i class="fas fa-brain"></i>
+                                <span>투자 심리 편향 분석</span>
+                            </div>
+                            <div class="feature-item-v2">
+                                <i class="fas fa-clock"></i>
+                                <span>의사결정 최적 타이밍</span>
+                            </div>
+                            <div class="feature-item-v2">
+                                <i class="fas fa-balance-scale"></i>
+                                <span>리스크 성향 프로파일링</span>
+                            </div>
+                        </div>
+                        <div class="card-target-v2">
+                            <span class="target-label-v2">Target →</span>
+                            <span class="target-value-v2">증권사 · 자산운용사 · PB</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ===== PART 3: ENTERPRISE IPA ===== -->
+            <div class="ipa-section reveal">
+                <div class="ipa-content">
+                    <h3>Enterprise IPA</h3>
+                    <p class="ipa-subtitle">Intelligent Process Automation</p>
+                    <p class="ipa-desc">
+                        행동 예측 엔진과 독립적으로 운영되는 지능형 업무 자동화 솔루션입니다.
+                        AI 기반 챗봇, 워크플로우 자동화, 문서 처리 등 기업의 반복 업무를 자동화합니다.
+                    </p>
+                    <div class="ipa-features">
+                        <div class="ipa-feature">
+                            <i class="fas fa-robot"></i>
+                            <span>AI 챗봇 시스템</span>
+                        </div>
+                        <div class="ipa-feature">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>워크플로우 자동화</span>
+                        </div>
+                        <div class="ipa-feature">
+                            <i class="fas fa-file-alt"></i>
+                            <span>OCR 문서 처리</span>
+                        </div>
+                        <div class="ipa-feature">
+                            <i class="fas fa-cogs"></i>
+                            <span>API 연동 통합</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ipa-visual">
+                    <div class="ipa-diagram">
+                        <i class="fas fa-cogs"></i>
+                        <span>예상 ROI</span>
+                        <div class="stat">40%↓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PART 4: INNOVATION LABS ===== -->
+            <div class="labs-section-new reveal">
+                <div class="labs-header-new">
+                    <div class="labs-title-new">
+                        <i class="fas fa-flask"></i>
+                        <span>INNOVATION LABS</span>
+                    </div>
+                    <p class="labs-desc-new">AI 기술 실험 및 연구 프로젝트</p>
+                </div>
+                <div class="labs-grid-new">
+                    <div class="lab-card-new">
+                        <div class="lab-icon-new youtube">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                        <h5>Trend Radar</h5>
+                        <p>AI 기반 유튜브 콘텐츠 주제 자동 검색 시스템</p>
+                        <span class="lab-status-new live">운영중</span>
+                    </div>
+                    <div class="lab-card-new">
+                        <div class="lab-icon-new accounting">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h5>AI 회계</h5>
+                        <p>OCR + AI 기반 영수증 처리 및 재고 관리</p>
+                        <span class="lab-status-new coming">개발예정</span>
+                    </div>
+                    <div class="lab-card-new">
+                        <div class="lab-icon-new invest">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5>매매 타이밍 포착</h5>
+                        <p>주식 매매 최적 타이밍 분석 시스템</p>
+                        <span class="lab-status-new research">연구중</span>
+                    </div>
+                    <div class="lab-card-new">
+                        <div class="lab-icon-new hospital">
+                            <i class="fas fa-hospital-user"></i>
+                        </div>
+                        <h5>병원 업무 자동화</h5>
+                        <p>의료기관 행정 프로세스 IPA 시스템</p>
+                        <span class="lab-status-new coming">개발예정</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3-WAY Behavioral AI Engine Section -->
+    <style>
+        /* ===== 3-WAY ENGINE SECTION ===== */
+        .h-engine-section {
+            background: var(--navy-dark);
+            padding: 120px 0;
+            color: var(--white);
+            overflow: hidden;
+        }
+        
+        .engine-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .engine-visual {
+            position: relative;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 궤도 애니메이션 */
+        .fusion-orbit {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border: 1px dashed rgba(52, 152, 219, 0.3);
+            border-radius: 50%;
+            animation: engineRotate 20s linear infinite;
+        }
+        
+        @keyframes engineRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 엔진 노드 공통 */
+        .engine-node {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(15, 39, 68, 0.9);
+            border: 2px solid var(--blue);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+        
+        .engine-node:hover {
+            transform: scale(1.1);
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.4);
+        }
+        
+        .engine-node.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(197, 160, 89, 0.5);
+            transform: scale(1.05);
+        }
+        
+        /* 클릭 힌트 애니메이션 */
+        .engine-node::after {
+            content: 'Click';
+            position: absolute;
+            bottom: -25px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .engine-node:hover::after {
+            opacity: 1;
+        }
+        
+        /* 첫 방문 시 힌트 펄스 */
+        .engine-node.hint-pulse {
+            animation: hintPulse 2s ease-in-out 3;
+        }
+        
+        @keyframes hintPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+            50% { box-shadow: 0 0 20px 10px rgba(197, 160, 89, 0.3); }
+        }
+        
+        /* 노드 위치 */
+        .node-psych { top: -20px; left: 50%; transform: translateX(-50%); }
+        .node-temp { bottom: 30px; left: 20px; }
+        .node-elem { bottom: 30px; right: 20px; }
+        
+        /* 연결선 */
+        .connection-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .connection-line {
+            stroke: rgba(52, 152, 219, 0.2);
+            stroke-width: 2;
+            fill: none;
+            transition: all 0.4s;
+        }
+        
+        .connection-line.active {
+            stroke: var(--gold);
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px rgba(197, 160, 89, 0.6));
+        }
+        
+        /* 중앙 코어 */
+        .fusion-core {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--blue) 0%, transparent 70%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            animation: enginePulse 3s infinite;
+            z-index: 5;
+            cursor: pointer;
+        }
+        
+        @keyframes enginePulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .fusion-core-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 14px;
+            color: white;
+        }
+        
+        /* 정보 카드 */
+        .engine-info-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            min-height: 300px;
+        }
+        
+        .info-detail {
+            display: none;
+            opacity: 0;
+        }
+        
+        .info-detail.active {
+            display: block;
+            animation: engineFadeIn 0.5s forwards;
+        }
+        
+        @keyframes engineFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .info-detail h3 {
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+        
+        .info-detail h4 {
+            color: var(--blue-light);
+            margin-bottom: 20px;
+        }
+        
+        .info-detail p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+        
+        .info-detail ul {
+            list-style: none;
+            padding: 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .info-detail li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .info-detail li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--blue-light);
+        }
+        
+        /* 탭으로 전환 힌트 (모바일) */
+        .tap-hint {
+            display: none;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            margin-top: 20px;
+        }
+        
+        .tap-hint i {
+            margin-right: 5px;
+            animation: tapBounce 1.5s infinite;
+        }
+        
+        @keyframes tapBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* ===== 반응형: 태블릿 ===== */
+        @media (max-width: 1024px) {
+            .engine-display {
+                gap: 40px;
+            }
+            
+            .engine-visual {
+                height: 400px;
+            }
+            
+            .fusion-orbit {
+                width: 320px;
+                height: 320px;
+            }
+            
+            .engine-node {
+                width: 85px;
+                height: 85px;
+            }
+            
+            .engine-info-card {
+                padding: 30px;
+            }
+        }
+        
+        /* ===== 반응형: 모바일 ===== */
+        @media (max-width: 768px) {
+            .h-engine-section {
+                padding: 80px 0;
+            }
+            
+            .engine-display {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .engine-visual {
+                height: 350px;
+                order: 1;
+            }
+            
+            .engine-info-card {
+                order: 2;
+                min-height: auto;
+                padding: 25px;
+            }
+            
+            .fusion-orbit {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .engine-node {
+                width: 75px;
+                height: 75px;
+                border-radius: 16px;
+            }
+            
+            .engine-node i {
+                font-size: 20px;
+            }
+            
+            .engine-node span {
+                font-size: 10px !important;
+            }
+            
+            .engine-node::after {
+                display: none;
+            }
+            
+            .fusion-core {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .fusion-core-text {
+                font-size: 12px;
+            }
+            
+            .tap-hint {
+                display: block;
+            }
+            
+            /* 모바일 노드 위치 조정 */
+            .node-psych { top: 0; left: 50%; transform: translateX(-50%); }
+            .node-temp { bottom: 20px; left: 30px; }
+            .node-elem { bottom: 20px; right: 30px; }
+        }
+        
+        /* ===== 반응형: 작은 모바일 ===== */
+        @media (max-width: 480px) {
+            .h-engine-section {
+                padding: 60px 0;
+            }
+            
+            .engine-visual {
+                height: 300px;
+            }
+            
+            .fusion-orbit {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .engine-node {
+                width: 65px;
+                height: 65px;
+            }
+            
+            .fusion-core {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .engine-info-card {
+                padding: 20px;
+            }
+            
+            .info-detail h3 {
+                font-size: 18px;
+            }
+            
+            .info-detail p {
+                font-size: 14px;
+            }
+        }
+    </style>
+
+    <section class="h-engine-section" id="engine">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-label">PROACTIVE TECHNOLOGY</span>
+                <h2 class="section-title" style="color:white">3-WAY Behavioral AI Engine</h2>
+                <p class="section-desc" style="color:rgba(255,255,255,0.6)">
+                    단순 통계를 넘어 인간 행동의 '이유(Why)'와 '타이밍(When)'을 예측합니다
+                </p>
+            </div>
+            
+            <div class="engine-display">
+                <div class="engine-visual reveal">
+                    <!-- 연결선 SVG -->
+                    <svg class="connection-lines" viewBox="0 0 400 400">
+                        <line class="connection-line" id="line-psych" x1="200" y1="80" x2="200" y2="200"/>
+                        <line class="connection-line" id="line-temp" x1="80" y1="320" x2="200" y2="200"/>
+                        <line class="connection-line" id="line-elem" x1="320" y1="320" x2="200" y2="200"/>
+                    </svg>
+                    
+                    <div class="fusion-orbit"></div>
+                    
+                    <div class="engine-node node-psych hint-pulse" data-type="psych" onclick="showEngineDetail('psych')">
+                        <i class="fas fa-brain" style="color:var(--blue-light); font-size:24px"></i>
+                        <span style="font-size:11px; margin-top:8px; color:rgba(255,255,255,0.8)">Psychological</span>
+                    </div>
+                    
+                    <div class="engine-node node-temp" data-type="temp" onclick="showEngineDetail('temp')">
+                        <i class="fas fa-clock" style="color:var(--blue-light); font-size:24px"></i>
+                        <span style="font-size:11px; margin-top:8px; color:rgba(255,255,255,0.8)">Temporal</span>
+                    </div>
+                    
+                    <div class="engine-node node-elem" data-type="elem" onclick="showEngineDetail('elem')">
+                        <i class="fas fa-fire" style="color:var(--blue-light); font-size:24px"></i>
+                        <span style="font-size:11px; margin-top:8px; color:rgba(255,255,255,0.8)">Elemental</span>
+                    </div>
+                    
+                    <div class="fusion-core" onclick="resetEngineDetail()">
+                        <div class="fusion-core-text">H-ENGINE<br>FUSION</div>
+                    </div>
+                    
+                    <!-- 모바일 힌트 -->
+                    <div class="tap-hint">
+                        <i class="fas fa-hand-pointer"></i>
+                        각 노드를 탭하여 상세 정보를 확인하세요
+                    </div>
+                </div>
+
+                <div class="engine-info-card reveal">
+                    <div id="default-info" class="info-detail active">
+                        <h3>🔍 설명 가능한 행동 로직 (XAI)</h3>
+                        <p>
+                            Bridge H의 엔진은 과거 데이터 통계에 의존하는 기존 AI와 달리, 
+                            행동경제학적 근거를 바탕으로 고객의 미래 행동을 예측합니다.
+                        </p>
+                        <p style="color: var(--gold); font-weight: 500;">
+                            👆 좌측의 각 레이어를 클릭하여 상세 분석 로직을 확인하세요.
+                        </p>
+                        <ul style="margin-top: 20px;">
+                            <li>Psychological: 왜 이런 결정을 하는가?</li>
+                            <li>Temporal: 언제 접근해야 효과적인가?</li>
+                            <li>Elemental: 어떤 방식이 맞는가?</li>
+                        </ul>
+                    </div>
+                    
+                    <div id="psych-info" class="info-detail">
+                        <h4>01. Psychological (심리 분석)</h4>
+                        <p style="color: var(--gold);">Cognitive Profiling & Heuristics Mapping</p>
+                        <ul>
+                            <li>개인별 의사결정 편향성 도출</li>
+                            <li>리스크 복원력 및 인지적 휴리스틱 유형 분류</li>
+                            <li>고객의 <strong>'Why(행동의 이면)'</strong> 분석</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border-left: 3px solid var(--blue-light);">
+                            <small style="color: rgba(255,255,255,0.6);">적용 예시</small>
+                            <p style="font-size: 14px; margin: 8px 0 0 0;">"이 고객은 손실회피 성향이 강해 '놓치면 후회' 프레이밍이 효과적입니다."</p>
+                        </div>
+                    </div>
+
+                    <div id="temp-info" class="info-detail">
+                        <h4>02. Temporal (시간 리듬)</h4>
+                        <p style="color: var(--gold);">Chrono-Intelligence & Timing Prediction</p>
+                        <ul>
+                            <li>에너지 주기에 따른 최적 개입 타이밍 포착</li>
+                            <li>의사결정 품질 저하 위험 구간 예측</li>
+                            <li>고객의 <strong>'When(최적의 시점)'</strong> 분석</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border-left: 3px solid var(--blue-light);">
+                            <small style="color: rgba(255,255,255,0.6);">적용 예시</small>
+                            <p style="font-size: 14px; margin: 8px 0 0 0;">"이번 주 목요일이 이 고객의 결정력이 가장 높은 시점입니다."</p>
+                        </div>
+                    </div>
+
+                    <div id="elem-info" class="info-detail">
+                        <h4>03. Elemental (기질 에너지)</h4>
+                        <p style="color: var(--gold);">Constitutional Architecture Mapping</p>
+                        <ul>
+                            <li>선천적 강점 및 약점의 데이터화</li>
+                            <li>환경 변화에 따른 행동 확률 모델링</li>
+                            <li><strong>State-dependent Preference</strong> 분석</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(52, 152, 219, 0.1); border-radius: 12px; border-left: 3px solid var(--blue-light);">
+                            <small style="color: rgba(255,255,255,0.6);">적용 예시</small>
+                            <p style="font-size: 14px; margin: 8px 0 0 0;">"분석형 기질 고객은 정밀함과 체계를 강조할 때 신뢰도가 상승합니다."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="section-container">
+            <div class="about-grid">
+                <div class="about-content reveal">
+                    <span class="section-label">ABOUT BRIDGE H</span>
+                    <h2 class="section-title">Human Insight를<br>Technology로 연결합니다</h2>
+                    <p class="about-quote">
+                        "우리는 단순히 기술을 개발하는 것을 넘어, 인류가 축적해온 인간 이해의 지혜를 
+                        데이터화하여 AI와 융합합니다. 가장 정교한 행동 예측은 기술과 인문학의 
+                        교차점에서 탄생한다고 믿습니다."
+                    </p>
+                    <div class="about-vision">
+                        <div class="icon">
+                            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>Our Vision</h4>
+                            <p>인간 행동을 가장 깊이 이해하는 AI 파트너</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-card reveal">
+                    <div class="ceo-header">
+                        <div class="ceo-avatar"><span>CEO</span></div>
+                        <div class="ceo-info">
+                            <h4>대표</h4>
+                            <p>AI & Business Strategy Expert</p>
+                        </div>
+                    </div>
+                    <ul class="ceo-career">
+                        <li>대기업 IT 실무 25년 (LG CNS, KT)</li>
+                        <li>금융/보험 산업 실무 경험 (삼성생명 GFC)</li>
+                        <li>7개 산업 분야 창업 및 사업 경험</li>
+                        <li>다수 대학 및 기관 AI/창업 강의</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-label">CONTACT US</span>
+                <h2 class="section-title">문의하기</h2>
+                <p class="section-desc">Bridge H와 함께 비즈니스의 다음을 설계하세요</p>
+            </div>
+            <div class="contact-wrapper">
+                <form class="contact-form reveal" id="contactForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>성함 / 담당자</label>
+                            <input type="text" placeholder="홍길동" required>
+                        </div>
+                        <div class="form-group">
+                            <label>연락처</label>
+                            <input type="email" placeholder="email@company.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>문의 유형</label>
+                        <select required>
+                            <option value="">선택해주세요</option>
+                            <option>H-Insight 솔루션 도입 문의</option>
+                            <option>업무 자동화 구축 문의</option>
+                            <option>제휴 및 협력 문의</option>
+                            <option>기타 문의</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>문의 내용</label>
+                        <textarea placeholder="프로젝트 개요나 궁금하신 내용을 적어주세요" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">문의 전송하기</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <img src="data:image/png;base64,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" alt="Bridge H">
+                </div>
+                <div class="footer-info">
+                    <p>브릿지에이치 연구소 | 사업자등록번호: 110-37-62594</p>
+                    <p>경기도 용인시 기흥구 동백죽전대로 444 C602호 | <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f2919d9c86939186b290809b9695979adc919ddc9980">[email&#160;protected]</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copy">© 2026 Bridge H. All Rights Reserved.</p>
+                <div class="footer-links">
+                    <a href="#home">홈</a>
+                    <a href="#services">사업 영역</a>
+                    <a href="#solutions">솔루션</a>
+                    <a href="#contact">문의하기</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1800);
+        });
+
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursorDot');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            cursorDot.style.left = e.clientX - 3 + 'px';
+            cursorDot.style.top = e.clientY - 3 + 'px';
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile Menu Toggle
+        function toggleMobile() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        // Particles Animation
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(52, 152, 219, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const particleCount = Math.min(100, window.innerWidth / 10);
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.strokeStyle = `rgba(52, 152, 219, ${0.1 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        resizeCanvas();
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initParticles();
+        });
+
+        // Typing Effect
+        const typingText = document.getElementById('typingText');
+        const words = ['AI로 설계합니다', 'Technology로 연결합니다', '데이터로 예측합니다'];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeEffect() {
+            const currentWord = words[wordIndex];
+            
+            if (isDeleting) {
+                typingText.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingText.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 100;
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                typeSpeed = 500;
+            }
+
+            setTimeout(typeEffect, typeSpeed);
+        }
+
+        setTimeout(typeEffect, 2000);
+
+        // Number Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const start = 0;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (target - start) * easeOut);
+                
+                element.textContent = current + '+';
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal');
+        const statNumbers = document.querySelectorAll('.stat-number');
+        let statsAnimated = false;
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // Stats Counter Trigger
+        const statsSection = document.querySelector('.hero-stats');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !statsAnimated) {
+                    statsAnimated = true;
+                    statNumbers.forEach(stat => animateCounter(stat));
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (statsSection) statsObserver.observe(statsSection);
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Form Submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #1a3a5c 0%, #2d5a87 100%);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 16px;
+                font-weight: 600;
+                box-shadow: 0 20px 60px rgba(26, 58, 92, 0.4);
+                z-index: 9999;
+                animation: slideDown 0.5s ease;
+            `;
+            toast.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 10px; vertical-align: middle;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>문의가 전송되었습니다. 빠른 시일 내 연락드리겠습니다.';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.5s ease forwards';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+            
+            this.reset();
+        });
+
+        // Add animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideDown {
+                from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+                to { transform: translateX(-50%) translateY(0); opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateX(-50%) translateY(0); opacity: 1; }
+                to { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // ===== Video Play Function =====
+        function playVideo(type) {
+            // TODO: 실제 동영상 URL로 교체
+            const videoUrls = {
+                'h-insight': 'https://www.youtube.com/embed/YOUR_VIDEO_ID',
+                'h-care': 'https://www.youtube.com/embed/YOUR_VIDEO_ID'
+            };
+            
+            // 모달 또는 새 창으로 동영상 재생
+            alert('동영상 준비 중입니다.\n\n실제 동영상 URL이 추가되면 자동으로 재생됩니다.');
+            
+            // 실제 구현 예시:
+            // window.open(videoUrls[type], '_blank');
+        }
+
+        // ===== 3-WAY Engine Functions =====
+        function showEngineDetail(type) {
+            // 모든 info-detail 숨기기
+            document.querySelectorAll('.info-detail').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 선택된 info-detail 표시
+            const targetInfo = document.getElementById(type + '-info');
+            if (targetInfo) {
+                targetInfo.classList.add('active');
+            }
+            
+            // 노드 active 상태 업데이트
+            document.querySelectorAll('.engine-node').forEach(node => {
+                node.classList.remove('active');
+                node.classList.remove('hint-pulse');
+            });
+            
+            const activeNode = document.querySelector(`.node-${type}`);
+            if (activeNode) {
+                activeNode.classList.add('active');
+            }
+            
+            // 연결선 활성화
+            document.querySelectorAll('.connection-line').forEach(line => {
+                line.classList.remove('active');
+            });
+            
+            const activeLine = document.getElementById('line-' + type);
+            if (activeLine) {
+                activeLine.classList.add('active');
+            }
+        }
+        
+        // 기본 상태로 리셋
+        function resetEngineDetail() {
+            document.querySelectorAll('.info-detail').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('default-info').classList.add('active');
+            
+            document.querySelectorAll('.engine-node').forEach(node => {
+                node.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.connection-line').forEach(line => {
+                line.classList.remove('active');
+            });
+        }
+        
+        // 힌트 펄스 6초 후 제거
+        setTimeout(() => {
+            document.querySelectorAll('.hint-pulse').forEach(el => {
+                el.classList.remove('hint-pulse');
+            });
+        }, 6000);
+    </script>
+</body>
+</html>

@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
@@ -11,7 +10,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 일반 로그인 로직 (추후 구현)
     alert('이메일 로그인은 준비 중입니다. 소셜 로그인을 이용해주세요.');
   };
 
@@ -34,6 +32,38 @@ export default function LoginPage() {
           <p className="mt-2 text-gray-600">K-Saju에 오신 것을 환영합니다</p>
         </div>
 
+        {/* 소셜 로그인 버튼 */}
+        <div className="space-y-3">
+          <button
+            onClick={handleKakaoLogin}
+            disabled={isLoading}
+            className="w-full py-3 bg-[#FEE500] text-[#191919] rounded-lg font-semibold hover:bg-[#FDD800] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path fillRule="evenodd" clipRule="evenodd" d="M10 3C5.58172 3 2 5.79086 2 9.2C2 11.3894 3.38041 13.3186 5.5 14.4V17.5L8.5 15.2C8.99 15.26 9.49 15.3 10 15.3C14.4183 15.3 18 12.5091 18 9.1C18 5.79086 14.4183 3 10 3Z" fill="#191919"/>
+            </svg>
+            {isLoading ? '로그인 중...' : '카카오 로그인'}
+          </button>
+
+          <button
+            onClick={handleNaverLogin}
+            disabled={isLoading}
+            className="w-full py-3 bg-[#03C75A] text-white rounded-lg font-semibold hover:bg-[#02b350] transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M13.5 10.5L6.5 3H3V17H6.5V9.5L13.5 17H17V3H13.5V10.5Z" fill="white"/>
+            </svg>
+            {isLoading ? '로그인 중...' : '네이버 로그인'}
+          </button>
+        </div>
+
+        {/* 구분선 */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-gray-300"></div>
+          <span className="text-gray-500 text-sm">또는</span>
+          <div className="flex-1 h-px bg-gray-300"></div>
+        </div>
+
         {/* 이메일 로그인 폼 */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -49,7 +79,6 @@ export default function LoginPage() {
               placeholder="이메일을 입력하세요"
             />
           </div>
-
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               비밀번호
@@ -63,7 +92,6 @@ export default function LoginPage() {
               placeholder="비밀번호를 입력하세요"
             />
           </div>
-
           <button
             type="submit"
             className="w-full py-3 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed"
