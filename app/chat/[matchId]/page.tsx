@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { supabase } from '@/app/lib/supabase';
 
 interface Message {
   id: string;
@@ -48,6 +49,36 @@ export default function ChatRoomPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // 실시간 구독
+  useEffect(() => {
+    if (!matchId) return;
+
+    const channel = supabase
+      .channel(`chat-${matchId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `match_id=eq.${matchId}`
+        },
+        (payload) => {
+          const newMsg = payload.new as Message;
+          setMessages(prev => {
+            // 중복 방지
+            if (prev.some(m => m.id === newMsg.id)) return prev;
+            return [...prev, newMsg];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [matchId]);
+
   const fetchChatRoom = async () => {
     try {
       const response = await fetch(`/api/chat/${matchId}/messages`);
@@ -76,9 +107,8 @@ export default function ChatRoomPage() {
       });
       
       if (response.ok) {
-        const data = await response.json();
-        setMessages(prev => [...prev, data.message]);
         setNewMessage('');
+        // 실시간으로 메시지가 오므로 여기서 추가 안 해도 됨
       }
     } catch (error) {
       console.error('Error sending message:', error);
